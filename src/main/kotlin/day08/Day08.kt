@@ -26,52 +26,37 @@ import readInput
 //
 
 fun main() {
-    part1(readInput("day08.txt", dropBlanks = false))
-    part2(readInput("day08.txt", dropBlanks = false))
-}
-
-fun part1(lines: List<String>) {
+    val lines = readInput("day08.txt", dropBlanks = false)
     val instructions = lines.first().map { instr -> Instruction.entries.first { it.id == instr } }
     val network = parseNetwork(lines.drop(2))
 
-    var stepCount = 0
-    var instructionPtr = 0
-    var node = network["AAA"]!!
-    while (node.name != "ZZZ") {
-        node = node.next(instructions[instructionPtr])
-        instructionPtr = (instructionPtr + 1) % instructions.size
-        stepCount++
-    }
+    // part 1
+    network["AAA"]!!.walk(instructions) { it.name == "ZZZ" }
+        .also { println("answer part 1: $it") }
 
-    println("answer part 1: $stepCount")
+    // part 2
+    val distances = network.values
+        .filter { it.name.endsWith("A") }.toMutableList()
+        .map { start -> start.walk(instructions) { it.name.endsWith("Z") } }
+
+    val primes = findPrimes(distances.max())
+    distances
+        .flatMap { findPrimeFactors(it, primes) }
+        .distinct()
+        .fold(1L) { prod, value -> prod * value }
+        .also { println("answer part 2: $it") }
 }
 
-fun part2(lines: List<String>) {
-    val instructions = lines.first().map { instr -> Instruction.entries.first { it.id == instr } }
-    val network = parseNetwork(lines.drop(2))
-
-    val nodePositions = network.values.filter { it.name.endsWith("A") }.toMutableList()
-    val distances = mutableMapOf<String, Int>()
-
-    var stepCount = 0
+fun Node.walk(instructions: List<Instruction>, isDestination: (Node) -> Boolean): Int {
+    var nodeIt = this
     var instructionPtr = 0
-    while (nodePositions.isNotEmpty()) {
-        val instruction = instructions[instructionPtr]
+    var stepCount = 0
+    while (!isDestination(nodeIt)) {
+        nodeIt = nodeIt.next(instructions[instructionPtr])
         instructionPtr = (instructionPtr + 1) % instructions.size
-        for (i in nodePositions.indices) {
-            nodePositions[i] = nodePositions[i].next(instruction)
-        }
         stepCount++
-
-        val dests = nodePositions.filter { it.name.endsWith("Z") }
-        dests.forEach { distances[it.name] = stepCount }
-        nodePositions.removeAll(dests)
     }
-
-    val primes = findPrimes(distances.values.max())
-    val primeFactors = distances.values.flatMap { findPrimeFactors(it, primes) }.distinct()
-    val answer = primeFactors.fold(1L) { prod, value -> prod * value }
-    println("answer part 2: $answer")
+    return stepCount
 }
 
 fun findPrimeFactors(number: Int, primes: List<Int>): List<Int> {
