@@ -1,5 +1,7 @@
 package day08
 
+import findPrimeFactors
+import findPrimes
 import readInput
 
 //
@@ -58,14 +60,6 @@ fun Node.walk(instructions: List<Instruction>, isDestination: (Node) -> Boolean)
     }
     return stepCount
 }
-
-fun findPrimeFactors(number: Int, primes: List<Int>): List<Int> {
-    return primes.filter { prime -> number % prime == 0 }
-}
-
-fun findPrimes(upperLimit: Int): List<Int> = (2..upperLimit).filter { isPrime(it) }
-
-fun isPrime(x: Int): Boolean = (2 .. (x / 2)).none { x % it == 0 }
 
 fun parseNetwork(lines: List<String>): Map<String, Node> {
     val nodes = mutableMapOf<String, Node>()
