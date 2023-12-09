@@ -1,0 +1,1 @@
+Expected format: One file per day containing the day's puzzle input. Naming scheme: day01.txt, day02.txt, etc.
