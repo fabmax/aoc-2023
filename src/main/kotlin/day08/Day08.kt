@@ -1,64 +1,98 @@
 package day08
 
+import AocPuzzle
 import findPrimeFactors
 import findPrimes
-import readInput
-
-//
-// val testInput = parseTestInput("""
-//     LLR
-//
-//     AAA = (BBB, BBB)
-//     BBB = (AAA, ZZZ)
-//     ZZZ = (ZZZ, ZZZ)
-// """.trimIndent(), dropBlanks = false)
-//
-// val testInput2 = parseTestInput("""
-//     LR
-//
-//     11A = (11B, XXX)
-//     11B = (XXX, 11Z)
-//     11Z = (11B, XXX)
-//     22A = (22B, XXX)
-//     22B = (22C, 22C)
-//     22C = (22Z, 22Z)
-//     22Z = (22B, 22B)
-//     XXX = (XXX, XXX)
-// """.trimIndent(), dropBlanks = false)
-//
 
 fun main() {
-    val lines = readInput("day08.txt", dropBlanks = false)
-    val instructions = lines.first().map { instr -> Instruction.entries.first { it.id == instr } }
-    val network = parseNetwork(lines.drop(2))
-
-    // part 1
-    network["AAA"]!!.walk(instructions) { it.name == "ZZZ" }
-        .also { println("answer part 1: $it") }
-
-    // part 2
-    val distances = network.values
-        .filter { it.name.endsWith("A") }.toMutableList()
-        .map { start -> start.walk(instructions) { it.name.endsWith("Z") } }
-
-    val primes = findPrimes(distances.max())
-    distances
-        .flatMap { findPrimeFactors(it, primes) }
-        .distinct()
-        .fold(1L) { prod, value -> prod * value }
-        .also { println("answer part 2: $it") }
+    Day08().run(true)
 }
 
-fun Node.walk(instructions: List<Instruction>, isDestination: (Node) -> Boolean): Int {
-    var nodeIt = this
-    var instructionPtr = 0
-    var stepCount = 0
-    while (!isDestination(nodeIt)) {
-        nodeIt = nodeIt.next(instructions[instructionPtr])
-        instructionPtr = (instructionPtr + 1) % instructions.size
-        stepCount++
+class Day08 : AocPuzzle() {
+    override fun solve(input: List<String>): Pair<Any, Any> {
+        val answer1 = part1(input)
+        val answer2 = part2(input)
+        return answer1 to answer2
     }
-    return stepCount
+
+    override fun test1(input: List<String>): Any = part1(input)
+
+    override fun test2(input: List<String>): Any = part2(input)
+
+    private fun part1(input: List<String>): Int {
+        val instructions = input.first().map { instr -> Instruction.entries.first { it.id == instr } }
+        val network = parseNetwork(input.drop(2))
+        return network["AAA"]!!.walk(instructions) { it.name == "ZZZ" }
+    }
+
+    private fun part2(input: List<String>): Long {
+        val instructions = input.first().map { instr -> Instruction.entries.first { it.id == instr } }
+        val network = parseNetwork(input.drop(2))
+
+        val distances = network.values
+            .filter { it.name.endsWith("A") }.toMutableList()
+            .map { start -> start.walk(instructions) { it.name.endsWith("Z") } }
+
+        val primes = findPrimes(distances.max())
+        return distances
+            .flatMap { findPrimeFactors(it, primes) }
+            .distinct()
+            .fold(1L) { prod, value -> prod * value }
+    }
+
+    override val answer1 = 16409
+    override val answer2 = 11795205644011L
+
+    init {
+        testInput(
+            expected1 = 2,
+            expected2 = null,
+            text = """
+                RL
+
+                AAA = (BBB, CCC)
+                BBB = (DDD, EEE)
+                CCC = (ZZZ, GGG)
+                DDD = (DDD, DDD)
+                EEE = (EEE, EEE)
+                GGG = (GGG, GGG)
+                ZZZ = (ZZZ, ZZZ)
+            """.trimIndent(),
+            parts = PART1
+        )
+
+        testInput(
+            expected1 = 6,
+            expected2 = null,
+            text = """
+                LLR
+            
+                AAA = (BBB, BBB)
+                BBB = (AAA, ZZZ)
+                ZZZ = (ZZZ, ZZZ)
+            """.trimIndent(),
+            parts = PART1
+        )
+
+        testInput(
+            expected1 = null,
+            expected2 = 6L,
+            text = """
+                LR
+           
+                11A = (11B, XXX)
+                11B = (XXX, 11Z)
+                11Z = (11B, XXX)
+                22A = (22B, XXX)
+                22B = (22C, 22C)
+                22C = (22Z, 22Z)
+                22Z = (22B, 22B)
+                XXX = (XXX, XXX)
+            """.trimIndent(),
+            parts = PART2
+        )
+    }
+
 }
 
 fun parseNetwork(lines: List<String>): Map<String, Node> {
@@ -81,6 +115,18 @@ class Node(val name: String, val leftName: String, val rightName: String) {
 
     fun next(instruction: Instruction): Node {
         return if (instruction == Instruction.L) left else right
+    }
+
+    fun walk(instructions: List<Instruction>, isDestination: (Node) -> Boolean): Int {
+        var nodeIt = this
+        var instructionPtr = 0
+        var stepCount = 0
+        while (!isDestination(nodeIt)) {
+            nodeIt = nodeIt.next(instructions[instructionPtr])
+            instructionPtr = (instructionPtr + 1) % instructions.size
+            stepCount++
+        }
+        return stepCount
     }
 }
 
