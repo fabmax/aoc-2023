@@ -54,7 +54,7 @@ abstract class AocPuzzle {
                 }
                 test.parts and PART2 != 0 -> {
                     val answer2 = test2(test.text.lines())
-                    println("    ${prefix(answer2, test.expected2)}Answer part 1: $answer2")
+                    println("    ${prefix(answer2, test.expected2)}Answer part 2: $answer2")
                 }
             }
             val ms = (System.nanoTime() - t) / 1e6

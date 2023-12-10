@@ -1,7 +1,8 @@
 package day10
 
+import AnsiColor
 import AocPuzzle
-import kotlin.math.abs
+import ansiColor
 
 fun main() = Day10().start()
 
@@ -12,6 +13,8 @@ class Day10 : AocPuzzle() {
 
     override fun solve(input: List<String>): Pair<Any?, Any?> {
         val maze = Maze(input)
+
+        maze.printColored()
 
         val loop = maze.traverseMaze()
         val answer1 = loop.size / 2
@@ -60,31 +63,42 @@ class Day10 : AocPuzzle() {
     private fun Pipe.left(maze: Maze): Pipe? = maze[x-1, y]
     private fun Pipe.right(maze: Maze): Pipe? = maze[x+1, y]
 
-    private fun Pipe.isConnecting(other: Pipe?): Boolean {
-        other ?: return false
-        check(abs(x - other.x) + abs(y - other.y) == 1)
-        if (shape == 'S' || other.shape == 'S') {
-            return true
-        }
+    private fun Pipe.isConnecting(other: Pipe): Boolean = when {
+        x == other.x && y > other.y ->    // other is up
+            shape in openUp && other.shape in openDn
+        y == other.y && x < other.x ->    // other is right
+            shape in openRt && other.shape in openLt
+        x == other.x && y < other.y ->    // other is down
+            shape in openDn && other.shape in openUp
+        y == other.y && x > other.x ->    // other is left
+            shape in openLt && other.shape in openRt
+        else -> false
+    }
 
-        return when {
-            x == other.x && y > other.y ->    // other is up
-                return shape in openUp && other.shape in openDn
-            y == other.y && x < other.x ->    // other is right
-                return shape in openRt && other.shape in openLt
-            x == other.x && y < other.y ->    // other is down
-                return shape in openDn && other.shape in openUp
-            y == other.y && x > other.x ->    // other is left
-                return shape in openLt && other.shape in openRt
-            else -> false
+    private fun Maze.printColored() {
+        val loop = traverseMaze()
+        val loopPoly = loop.toList()
+
+        maze.forEach { row ->
+            print("      ")
+            row.forEach {
+                val fgColor = when {
+                    it in loop -> AnsiColor.BRIGHT_BLUE
+                    it.isInside(loopPoly) -> AnsiColor.RED
+                    else -> AnsiColor.BRIGHT_BLACK
+                }
+                val bgColor = if (it.shape == 'S') AnsiColor.YELLOW else null
+                print(ansiColor("${it.shape}", fgColor, bgColor))
+            }
+            println()
         }
     }
 
     companion object {
-        private val openUp = setOf('|', 'J', 'L')
-        private val openDn = setOf('|', '7', 'F')
-        private val openLt = setOf('-', 'J', '7')
-        private val openRt = setOf('-', 'L', 'F')
+        private val openUp = setOf('|', 'J', 'L', 'S')
+        private val openDn = setOf('|', '7', 'F', 'S')
+        private val openLt = setOf('-', 'J', '7', 'S')
+        private val openRt = setOf('-', 'L', 'F', 'S')
     }
 
     init {
@@ -97,7 +111,7 @@ class Day10 : AocPuzzle() {
                 LJ...
             """.trimIndent(),
             expected1 = 8,
-            parts = PART1
+            expected2 = 1
         )
         testInput(
             text = """
@@ -122,8 +136,8 @@ data class Pipe(val shape: Char, val x: Int, val y: Int)
 
 class Maze(lines: List<String>) {
     val maze: List<List<Pipe>> =
-        lines.mapIndexed { y, line ->
-            line.mapIndexed { x, c ->
+        lines.mapIndexed { y, row ->
+            row.mapIndexed { x, c ->
                 Pipe(c, x, y)
             }
         }
