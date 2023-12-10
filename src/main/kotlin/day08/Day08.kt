@@ -4,11 +4,13 @@ import AocPuzzle
 import findPrimeFactors
 import findPrimes
 
-fun main() {
-    Day08().run(true)
-}
+fun main() = Day08().start()
 
 class Day08 : AocPuzzle() {
+
+    override val answer1 = 16409
+    override val answer2 = 11795205644011L
+
     override fun solve(input: List<String>): Pair<Any, Any> {
         val answer1 = part1(input)
         val answer2 = part2(input)
@@ -40,13 +42,8 @@ class Day08 : AocPuzzle() {
             .fold(1L) { prod, value -> prod * value }
     }
 
-    override val answer1 = 16409
-    override val answer2 = 11795205644011L
-
     init {
         testInput(
-            expected1 = 2,
-            expected2 = null,
             text = """
                 RL
 
@@ -58,12 +55,11 @@ class Day08 : AocPuzzle() {
                 GGG = (GGG, GGG)
                 ZZZ = (ZZZ, ZZZ)
             """.trimIndent(),
+            expected1 = 2,
             parts = PART1
         )
 
         testInput(
-            expected1 = 6,
-            expected2 = null,
             text = """
                 LLR
             
@@ -71,12 +67,11 @@ class Day08 : AocPuzzle() {
                 BBB = (AAA, ZZZ)
                 ZZZ = (ZZZ, ZZZ)
             """.trimIndent(),
+            expected1 = 6,
             parts = PART1
         )
 
         testInput(
-            expected1 = null,
-            expected2 = 6L,
             text = """
                 LR
            
@@ -89,6 +84,7 @@ class Day08 : AocPuzzle() {
                 22Z = (22B, 22B)
                 XXX = (XXX, XXX)
             """.trimIndent(),
+            expected2 = 6L,
             parts = PART2
         )
     }

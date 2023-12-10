@@ -3,11 +3,12 @@ package day05
 import AocPuzzle
 import kotlinx.coroutines.*
 
-fun main() {
-    Day05().run(true)
-}
+fun main() = Day05().start()
 
 class Day05 : AocPuzzle() {
+
+    override val answer1 = 484023871L
+    override val answer2 = 46294175L
 
     override fun solve(input: List<String>): Pair<Any, Any> {
         val almanac = parseAlmanac(input)
@@ -53,13 +54,8 @@ class Day05 : AocPuzzle() {
         return Category(key, ranges)
     }
 
-    override val answer1 = 484023871L
-    override val answer2 = 46294175L
-
     init {
         testInput(
-            expected1 = 35L,
-            expected2 = 46L,
             text = """
                 seeds: 79 14 55 13
             
@@ -94,7 +90,9 @@ class Day05 : AocPuzzle() {
                 humidity-to-location map:
                 60 56 37
                 56 93 4
-            """.trimIndent()
+            """.trimIndent(),
+            expected1 = 35L,
+            expected2 = 46L
         )
     }
 }

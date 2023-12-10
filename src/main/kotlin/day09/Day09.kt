@@ -2,11 +2,12 @@ package day09
 
 import AocPuzzle
 
-fun main() {
-    Day09().run(false)
-}
+fun main() = Day09().start()
 
 class Day09 : AocPuzzle() {
+
+    override val answer1 = 1789635132
+    override val answer2 = 913
 
     override fun solve(input: List<String>): Pair<Any, Any> {
         val sequences = input
@@ -37,18 +38,15 @@ class Day09 : AocPuzzle() {
         return deltas[0]
     }
 
-    override val answer1 = 1789635132
-    override val answer2 = 913
-
     init {
         testInput(
-            expected1 = 114,
-            expected2 = 2,
             text = """
                  0  3  6  9 12 15
                  1  3  6 10 15 21
                 10 13 16 21 30 45
-            """.trimIndent()
+            """.trimIndent(),
+            expected1 = 114,
+            expected2 = 2
         )
     }
 }
