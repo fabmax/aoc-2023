@@ -10,13 +10,13 @@ abstract class AocPuzzle {
 
     protected val testInputs = mutableListOf<TestInput>()
 
-    protected abstract fun solve(input: List<String>): Pair<Any, Any>
+    protected abstract fun solve(input: List<String>): Pair<Any?, Any?>
 
-    protected open fun test1(input: List<String>): Any {
+    protected open fun test1(input: List<String>): Any? {
         return solve(input).first
     }
 
-    protected open fun test2(input: List<String>): Any {
+    protected open fun test2(input: List<String>): Any? {
         return solve(input).second
     }
 
