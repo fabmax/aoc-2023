@@ -46,6 +46,7 @@ class Day10 : AocPuzzle() {
 
     private fun Pipe.isInside(loop: List<Pipe>): Boolean {
         // good old inside polygon check...
+        // based on pnpoly: https://wrfranklin.org/Research/Short_Notes/pnpoly.html
         var isInside = false
         for (i in loop.indices) {
             val li = loop[i]
@@ -83,12 +84,13 @@ class Day10 : AocPuzzle() {
             print("      ")
             row.forEach {
                 val fgColor = when {
+                    it.shape == 'S' -> AnsiColor.BLACK
                     it in loop -> AnsiColor.BRIGHT_BLUE
                     it.isInside(loopPoly) -> AnsiColor.RED
                     else -> AnsiColor.BRIGHT_BLACK
                 }
-                val bgColor = if (it.shape == 'S') AnsiColor.YELLOW else null
-                print(ansiColor("${it.shape}", fgColor, bgColor))
+                val bgColor = if (it.shape == 'S') AnsiColor.BRIGHT_YELLOW else null
+                print(ansiColor("${charMap[it.shape] ?: it.shape}", fgColor, bgColor))
             }
             println()
         }
@@ -99,6 +101,15 @@ class Day10 : AocPuzzle() {
         private val openDn = setOf('|', '7', 'F', 'S')
         private val openLt = setOf('-', 'J', '7', 'S')
         private val openRt = setOf('-', 'L', 'F', 'S')
+
+        private val charMap = mapOf(
+            '|' to '┃',
+            '-' to '━',
+            'J' to '┛',
+            'L' to '┗',
+            'F' to '┏',
+            '7' to '┓'
+        )
     }
 
     init {
