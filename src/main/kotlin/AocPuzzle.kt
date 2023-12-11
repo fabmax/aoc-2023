@@ -22,15 +22,17 @@ abstract class AocPuzzle {
 
     fun start() {
         runTests()
+        println()
         runPuzzle()
     }
 
     fun runPuzzle() {
+        println("Day $day Puzzle:")
+
         val t = System.nanoTime()
         val (answer1, answer2) = solve(input)
         val ms = (System.nanoTime() - t) / 1e6
 
-        println("Day $day Puzzle:")
         println("  ${prefix(answer1, this.answer1)}Answer part 1: $answer1")
         println("  ${prefix(answer2, this.answer2)}Answer part 2: $answer2")
         println("  Took %.3f ms".format(ms))
