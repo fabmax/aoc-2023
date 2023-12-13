@@ -1,15 +1,3 @@
-import java.io.File
-
-fun readInput(name: String, dropBlanks: Boolean = true): List<String> {
-    val lines = File("inputs/$name").readLines()
-    return if (dropBlanks) lines.filter { it.isNotBlank() } else lines
-}
-
-fun parseTestInput(input: String, dropBlanks: Boolean = true): List<String> {
-    val lines = input.trimIndent().lines()
-    return if (dropBlanks) lines.filter { it.isNotBlank() } else lines
-}
-
 fun findPrimeFactors(number: Int, primes: List<Int>): List<Int> {
     return primes.filter { prime -> number % prime == 0 }
 }
@@ -27,13 +15,14 @@ fun findPrimes(upperLimit: Int): List<Int> = (2..upperLimit).filter { it.isPrime
 
 val Int.isPrime: Boolean get() = (2 .. (this / 2)).none { this % it == 0 }
 
-fun ansiColor(text: String, fg: AnsiColor? = null, bg: AnsiColor? = null): String {
+fun printColored(text: String, fg: AnsiColor? = null, bg: AnsiColor? = null) {
     val fgCode = fg?.let { "${it.fg}" } ?: ""
     val bgCode = bg?.let { "${it.bg}" } ?: ""
     val sep = if (fgCode.isNotBlank() && bgCode.isNotBlank()) ";" else ""
-    return "\u001b[${fgCode}${sep}${bgCode}m$text\u001B[0m"
+    print("\u001b[${fgCode}${sep}${bgCode}m$text\u001B[0m")
 }
 
+@Suppress("unused")
 enum class AnsiColor(val fg: Int, val bg: Int) {
     BLACK(30, 40),
     RED(31, 41),

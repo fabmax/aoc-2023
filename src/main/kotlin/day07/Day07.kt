@@ -1,22 +1,19 @@
 package day07
 
-import readInput
+import AocPuzzle
 
-fun main() {
-    part1(readInput("day07.txt"))
-    part2(readInput("day07.txt"))
-}
+fun main() = Day07().start()
 
-fun part1(input: List<String>) {
-    val hands = input.map { Hand(it) }.ranked()
-    val winnings = hands.mapIndexed { rank, hand -> hand.bid * (rank+1) }.sum()
-    println("answer part 1: $winnings")
-}
+class Day07 : AocPuzzle() {
+    override fun solve(input: List<String>): Pair<Any?, Any?> {
+        val hands1 = input.map { Hand(it) }.ranked()
+        val answer1 = hands1.mapIndexed { rank, hand -> hand.bid * (rank+1) }.sum()
 
-fun part2(input: List<String>) {
-    val hands = input.map { Hand(it) }.ranked(isJokerRule = true)
-    val winnings = hands.mapIndexed { rank, hand -> hand.bid * (rank+1) }.sum()
-    println("answer part 2: $winnings")
+        val hands2 = input.map { Hand(it) }.ranked(isJokerRule = true)
+        val answer2 = hands2.mapIndexed { rank, hand -> hand.bid * (rank+1) }.sum()
+
+        return answer1 to answer2
+    }
 }
 
 data class Hand(

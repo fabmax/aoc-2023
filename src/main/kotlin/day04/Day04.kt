@@ -1,28 +1,26 @@
 package day04
 
-import readInput
+import AocPuzzle
 
-fun main() {
-    part1()
-    part2()
-}
+fun main() = Day04().start()
 
-fun part1() {
-    val answer = readInput("day04.txt")
-        .map { Card(it) }
-        .sumOf { it.points }
-    println("Answer part 1: $answer")
-}
+class Day04 : AocPuzzle() {
+    override fun solve(input: List<String>): Pair<Any?, Any?> {
+        val answer1 = input
+            .map { Card(it) }
+            .sumOf { it.points }
 
-fun part2() {
-    val cards = readInput("day04.txt").map { Card(it) }
-    for (i in cards.indices) {
-        val card = cards[i]
-        for (j in (i+1) ..< (i+1+card.matches).coerceAtMost(cards.size)) {
-            cards[j].copies += card.copies
+        val cards = input.map { Card(it) }
+        for (i in cards.indices) {
+            val card = cards[i]
+            for (j in (i+1) ..< (i+1+card.matches).coerceAtMost(cards.size)) {
+                cards[j].copies += card.copies
+            }
         }
+        val answer2 = cards.sumOf { it.copies }
+
+        return answer1 to answer2
     }
-    println("Answer part 2: ${cards.sumOf { it.copies }}")
 }
 
 fun Card(line: String): Card {

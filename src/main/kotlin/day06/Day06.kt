@@ -1,53 +1,47 @@
 package day06
 
-import parseTestInput
+import AocPuzzle
 
-val input = parseTestInput("""
-    Time:        34     90     89     86
-    Distance:   204   1713   1210   1780
-""".trimIndent())
+fun main() = Day06().start()
 
-fun main() {
-    part1(input)
-    part2(input)
-}
+class Day06 : AocPuzzle() {
+    override fun solve(input: List<String>): Pair<Any?, Any?> {
+        return part1(input) to part2(input)
+    }
 
-fun part1(input: List<String>) {
-    val times = input[0].substringAfter(':')
-        .split(" ")
-        .filter { it.isNotBlank() }
-        .map { it.trim().toInt() }
-    val distances = input[1].substringAfter(':')
-        .split(" ")
-        .filter { it.isNotBlank() }
-        .map { it.trim().toInt() }
+    private fun part1(input: List<String>): Int {
+        val times = input[0].substringAfter(':')
+            .split(" ")
+            .filter { it.isNotBlank() }
+            .map { it.trim().toInt() }
+        val distances = input[1].substringAfter(':')
+            .split(" ")
+            .filter { it.isNotBlank() }
+            .map { it.trim().toInt() }
 
-    val answer = times.zip(distances)
-        .map { (time, distance) -> getPossibleRuns(time).filter { it.distance > distance } }
-        .fold(1) { value, betterOptions -> value * betterOptions.size }
+        return times.zip(distances)
+            .map { (time, distance) -> getPossibleRuns(time).filter { it.distance > distance } }
+            .fold(1) { value, betterOptions -> value * betterOptions.size }
+    }
 
-    println("Answer part 1: $answer")
-}
+    private fun part2(input: List<String>): Int {
+        val time = input[0].substringAfter(':')
+            .filter { !it.isWhitespace() }
+            .trim().toLong()
+        val distance = input[1].substringAfter(':')
+            .filter { !it.isWhitespace() }
+            .trim().toLong()
 
-fun part2(input: List<String>) {
-    val time = input[0].substringAfter(':')
-        .filter { !it.isWhitespace() }
-        .trim().toLong()
-    val distance = input[1].substringAfter(':')
-        .filter { !it.isWhitespace() }
-        .trim().toLong()
+        return (0..time)
+            .map { chargeTime -> (time - chargeTime) * chargeTime }
+            .count { it > distance }
+    }
 
-    val answer = (0..time)
-        .map { chargeTime -> (time - chargeTime) * chargeTime }
-        .count { it > distance }
-
-    println("Answer part 2: $answer")
+    private fun getPossibleRuns(time: Int): List<Run> {
+        return (0 .. time).map { chargeTime ->
+            Run(time, chargeTime, (time - chargeTime) * chargeTime)
+        }
+    }
 }
 
 data class Run(val totalTime: Int, val chargeTime: Int, val distance: Int)
-
-fun getPossibleRuns(time: Int): List<Run> {
-    return (0 .. time).map { chargeTime ->
-        Run(time, chargeTime, (time - chargeTime) * chargeTime)
-    }
-}

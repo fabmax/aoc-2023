@@ -1,27 +1,27 @@
 package day02
 
-import readInput
+import AocPuzzle
 
-fun main() {
-    val lines = readInput("day02.txt")
-    val games = lines.map { Game.parse(it) }
+fun main() = Day02().start()
 
-    part1(games)
-    part2(games)
-}
+class Day02 : AocPuzzle() {
+    override fun solve(input: List<String>): Pair<Any?, Any?> {
+        val games = input.map { Game.parse(it) }
+        return part1(games) to part2(games)
+    }
 
-fun part2(games: List<Game>) {
-    val sumOfPowers = games.sumOf { it.getMinimumSet().power }
-    println("answer part 2: $sumOfPowers")
-}
+    fun part1(games: List<Game>): Int {
+        val filterRed = 12
+        val filterGreen = 13
+        val filterBlue = 14
 
-fun part1(games: List<Game>) {
-    val filterRed = 12
-    val filterGreen = 13
-    val filterBlue = 14
+        val filteredGames = games.filter { it.isPossibleWith(filterRed, filterGreen, filterBlue) }
+        return filteredGames.sumOf { it.id }
+    }
 
-    val filteredGames = games.filter { it.isPossibleWith(filterRed, filterGreen, filterBlue) }
-    println("answer part 1: " + filteredGames.sumOf { it.id })
+    fun part2(games: List<Game>): Int {
+        return games.sumOf { it.getMinimumSet().power }
+    }
 }
 
 data class Game(val id: Int, val sets: List<GameSet>) {

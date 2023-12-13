@@ -2,7 +2,7 @@ package day10
 
 import AnsiColor
 import AocPuzzle
-import ansiColor
+import printColored
 
 fun main() = Day10().start()
 
@@ -11,7 +11,7 @@ class Day10 : AocPuzzle() {
     override fun solve(input: List<String>): Pair<Any?, Any?> {
         val maze = Maze(input)
 
-        maze.printColored()
+        maze.printMaze()
 
         val loop = maze.traverseMaze()
         val answer1 = loop.size / 2
@@ -73,7 +73,7 @@ class Day10 : AocPuzzle() {
         else -> false
     }
 
-    private fun Maze.printColored() {
+    private fun Maze.printMaze() {
         val loop = traverseMaze()
         val loopPoly = loop.toList()
 
@@ -87,7 +87,7 @@ class Day10 : AocPuzzle() {
                     else -> AnsiColor.BRIGHT_BLACK
                 }
                 val bgColor = if (it.shape == 'S') AnsiColor.BRIGHT_YELLOW else null
-                print(ansiColor("${charMap[it.shape] ?: it.shape}", fgColor, bgColor))
+                printColored("${charMap[it.shape] ?: it.shape}", fgColor, bgColor)
             }
             println()
         }
