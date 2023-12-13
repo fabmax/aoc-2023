@@ -14,6 +14,15 @@ fun findPrimeFactors(number: Int, primes: List<Int>): List<Int> {
     return primes.filter { prime -> number % prime == 0 }
 }
 
+inline fun <T> List<T>.splitBy(predicate: (T) -> Boolean): List<List<T>> {
+    return (listOf(-1) + indices.filter { predicate(get(it)) } + listOf(lastIndex))
+        .zipWithNext { from, to -> subList(from + 1, to) }
+}
+
+fun List<String>.splitByBlankLines(): List<List<String>> {
+    return splitBy { it.isBlank() }
+}
+
 fun findPrimes(upperLimit: Int): List<Int> = (2..upperLimit).filter { it.isPrime }
 
 val Int.isPrime: Boolean get() = (2 .. (this / 2)).none { this % it == 0 }

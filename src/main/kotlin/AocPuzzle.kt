@@ -27,8 +27,8 @@ abstract class AocPuzzle {
         val (answer1, answer2) = solve(inputData.puzzleInput)
         val ms = (System.nanoTime() - t) / 1e6
 
-        println("  ${prefix(answer1, inputData.puzzle1)}Answer part 1: $answer1")
-        println("  ${prefix(answer2, inputData.puzzle2)}Answer part 2: $answer2")
+        println("  ${prefix(answer1, inputData.answerPart1)}Answer part 1: $answer1")
+        println("  ${prefix(answer2, inputData.answerPart2)}Answer part 2: $answer2")
         println("  Took %.3f ms".format(ms))
     }
 

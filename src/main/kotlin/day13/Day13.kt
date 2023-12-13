@@ -1,6 +1,7 @@
 package day13
 
 import AocPuzzle
+import splitByBlankLines
 import kotlin.math.min
 
 fun main() = Day13().start()
@@ -8,12 +9,7 @@ fun main() = Day13().start()
 class Day13 : AocPuzzle() {
 
     override fun solve(input: List<String>): Pair<Any?, Any?> {
-        val patterns = input
-            .runningFold(mutableListOf<String>()) { group, line ->
-                if (line.isBlank()) mutableListOf() else group.apply { add(line) }
-            }
-            .distinct()
-            .map { Pattern(it) }
+        val patterns = input.splitByBlankLines().map { Pattern(it) }
 
         val answer1 = patterns.sumOf {
             100 * it.findReflectionCenterRow(0) + it.findReflectionCenterCol(0)
@@ -38,7 +34,7 @@ class Day13 : AocPuzzle() {
         }
 
         private fun List<String>.isReflectionAt(index: Int, smudgeCount: Int): Boolean {
-            val iterations = min(index, lastIndex - index + 1)
+            val iterations = min(index, size - index)
             return smudgeCount == (0 ..< iterations).sumOf {
                 get(index - it - 1).distance(get(index + it))
             }
