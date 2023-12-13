@@ -11,14 +11,12 @@ class Day13 : AocPuzzle() {
     override val answer2 = 31947
 
     override fun solve(input: List<String>): Pair<Any?, Any?> {
-        val patterns = buildList {
-            input.plus("").fold(mutableListOf<String>()) { group, line ->
-                when {
-                    line.isBlank() -> mutableListOf<String>().also { add(Pattern(group)) }
-                    else -> group.also { it.add(line) }
-                }
+        val patterns = input
+            .runningFold(mutableListOf<String>()) { group, line ->
+                if (line.isBlank()) mutableListOf() else group.apply { add(line) }
             }
-        }
+            .distinct()
+            .map { Pattern(it) }
 
         val answer1 = patterns.sumOf {
             100 * it.findReflectionCenterRow(0) + it.findReflectionCenterCol(0)
@@ -36,14 +34,14 @@ class Day13 : AocPuzzle() {
         }
 
         fun findReflectionCenterRow(smudgeCount: Int): Int {
-            return (1 .. lines.lastIndex).firstOrNull { lines.isReflectingAt(it, smudgeCount) } ?: 0
+            return (1 .. lines.lastIndex).firstOrNull { lines.isReflectionAt(it, smudgeCount) } ?: 0
         }
 
         fun findReflectionCenterCol(smudgeCount: Int): Int {
-            return (1 .. transposed.lastIndex).firstOrNull { transposed.isReflectingAt(it, smudgeCount) } ?: 0
+            return (1 .. transposed.lastIndex).firstOrNull { transposed.isReflectionAt(it, smudgeCount) } ?: 0
         }
 
-        private fun List<String>.isReflectingAt(index: Int, smudgeCount: Int): Boolean {
+        private fun List<String>.isReflectionAt(index: Int, smudgeCount: Int): Boolean {
             val iterations = min(index, lastIndex - index + 1)
             return smudgeCount == (0 ..< iterations).sumOf {
                 get(index - it - 1).distance(get(index + it))
