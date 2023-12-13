@@ -2,11 +2,6 @@ package day06
 
 import parseTestInput
 
-// val testInput = parseTestInput("""
-//     Time:      7  15   30
-//     Distance:  9  40  200
-// """.trimIndent())
-
 val input = parseTestInput("""
     Time:        34     90     89     86
     Distance:   204   1713   1210   1780

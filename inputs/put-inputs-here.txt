@@ -1,1 +1,8 @@
 Expected format: One file per day containing the day's puzzle input. Naming scheme: day01.txt, day02.txt, etc.
+
+One file per day with main puzzle input: day01.txt, day02.txt, ...
+
+N files per day with test input: day01_test.txt, day02_test1.txt, day02_test2.txt, ...
+Test files are expected to have meta-data with expected results in first line:
+  test1=17; test2=31; puzzle1=1234; puzzle2=1234567890123
+

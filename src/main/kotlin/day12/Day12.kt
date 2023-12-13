@@ -6,9 +6,6 @@ fun main() = Day12().start()
 
 class Day12 : AocPuzzle() {
 
-    override val answer1 = 7753L
-    override val answer2 = 280382734828319L
-
     override fun solve(input: List<String>): Pair<Any?, Any?> {
         val conditionsAndGroups = input.map { line ->
             val (conditions, groups) = line.split(" ")
@@ -57,20 +54,5 @@ class Day12 : AocPuzzle() {
         }
 
         return recurse(0, 0)
-    }
-
-    init {
-        testInput(
-            text = """
-                ???.### 1,1,3
-                .??..??...?##. 1,1,3
-                ?#?#?#?#?#?#?#? 1,3,1,6
-                ????.#...#... 4,1,1
-                ????.######..#####. 1,6,5
-                ?###???????? 3,2,1
-            """.trimIndent(),
-            expected1 = 21L,
-            expected2 = 525152L
-        )
     }
 }

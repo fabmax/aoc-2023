@@ -8,9 +8,6 @@ fun main() = Day11().start()
 
 class Day11 : AocPuzzle() {
 
-    override val answer1 = 9805264L
-    override val answer2 = 779032247216L
-
     override fun solve(input: List<String>): Pair<Any?, Any?> {
         val image = Image(input)
 
@@ -33,25 +30,6 @@ class Day11 : AocPuzzle() {
                 }
                 (xDist + yDist).toLong()
             }
-    }
-
-    init {
-        testInput(
-            text = """
-                ...#......
-                .......#..
-                #.........
-                ..........
-                ......#...
-                .#........
-                .........#
-                ..........
-                .......#..
-                #...#.....
-            """.trimIndent(),
-            expected1 = 374L,
-            expected2 = 82000210L
-        )
     }
 }
 

@@ -8,9 +8,6 @@ fun main() = Day08().start()
 
 class Day08 : AocPuzzle() {
 
-    override val answer1 = 16409
-    override val answer2 = 11795205644011L
-
     override fun solve(input: List<String>): Pair<Any, Any> {
         val answer1 = part1(input)
         val answer2 = part2(input)
@@ -41,54 +38,6 @@ class Day08 : AocPuzzle() {
             .distinct()
             .fold(1L) { prod, value -> prod * value }
     }
-
-    init {
-        testInput(
-            text = """
-                RL
-
-                AAA = (BBB, CCC)
-                BBB = (DDD, EEE)
-                CCC = (ZZZ, GGG)
-                DDD = (DDD, DDD)
-                EEE = (EEE, EEE)
-                GGG = (GGG, GGG)
-                ZZZ = (ZZZ, ZZZ)
-            """.trimIndent(),
-            expected1 = 2,
-            parts = PART1
-        )
-
-        testInput(
-            text = """
-                LLR
-            
-                AAA = (BBB, BBB)
-                BBB = (AAA, ZZZ)
-                ZZZ = (ZZZ, ZZZ)
-            """.trimIndent(),
-            expected1 = 6,
-            parts = PART1
-        )
-
-        testInput(
-            text = """
-                LR
-           
-                11A = (11B, XXX)
-                11B = (XXX, 11Z)
-                11Z = (11B, XXX)
-                22A = (22B, XXX)
-                22B = (22C, 22C)
-                22C = (22Z, 22Z)
-                22Z = (22B, 22B)
-                XXX = (XXX, XXX)
-            """.trimIndent(),
-            expected2 = 6L,
-            parts = PART2
-        )
-    }
-
 }
 
 fun parseNetwork(lines: List<String>): Map<String, Node> {

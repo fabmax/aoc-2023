@@ -1,14 +1,8 @@
-import java.io.File
-
 abstract class AocPuzzle {
 
     private val day = Regex("""\d+""").find(this::class.simpleName!!)!!.value.toInt()
 
-    open val answer1: Any? = null
-    open val answer2: Any? = null
-    private val input = File("inputs/day%02d.txt".format(day)).readLines().dropLastWhile { it.isBlank() }
-
-    protected val testInputs = mutableListOf<TestInput>()
+    val inputData = InputData(day)
 
     protected abstract fun solve(input: List<String>): Pair<Any?, Any?>
 
@@ -30,33 +24,37 @@ abstract class AocPuzzle {
         println("Day $day Puzzle:")
 
         val t = System.nanoTime()
-        val (answer1, answer2) = solve(input)
+        val (answer1, answer2) = solve(inputData.puzzleInput)
         val ms = (System.nanoTime() - t) / 1e6
 
-        println("  ${prefix(answer1, this.answer1)}Answer part 1: $answer1")
-        println("  ${prefix(answer2, this.answer2)}Answer part 2: $answer2")
+        println("  ${prefix(answer1, inputData.puzzle1)}Answer part 1: $answer1")
+        println("  ${prefix(answer2, inputData.puzzle2)}Answer part 2: $answer2")
         println("  Took %.3f ms".format(ms))
     }
 
     fun runTests() {
         println("Day $day Tests:")
 
-        testInputs.forEachIndexed { i, test ->
+        inputData.testInputs.forEachIndexed { i, test ->
             println("  [Test ${i+1}]:")
+
+            val isTestPart1 = test.test1 != null
+            val isTestPart2 = test.test2 != null
+
             val t = System.nanoTime()
             when {
-                test.parts and PART1 != 0 && test.parts and PART2 != 0 -> {
-                    val (answer1, answer2) = solve(test.text.lines())
-                    println("    ${prefix(answer1, test.expected1)}Answer part 1: $answer1")
-                    println("    ${prefix(answer2, test.expected2)}Answer part 2: $answer2")
+                isTestPart1 && isTestPart2 -> {
+                    val (answer1, answer2) = solve(test.testInput)
+                    println("    ${prefix(answer1, test.test1)}Answer part 1: $answer1")
+                    println("    ${prefix(answer2, test.test2)}Answer part 2: $answer2")
                 }
-                test.parts and PART1 != 0 -> {
-                    val answer1 = test1(test.text.lines())
-                    println("    ${prefix(answer1, test.expected1)}Answer part 1: $answer1")
+                isTestPart1 -> {
+                    val answer1 = test1(test.testInput)
+                    println("    ${prefix(answer1, test.test1)}Answer part 1: $answer1")
                 }
-                test.parts and PART2 != 0 -> {
-                    val answer2 = test2(test.text.lines())
-                    println("    ${prefix(answer2, test.expected2)}Answer part 2: $answer2")
+                isTestPart2 -> {
+                    val answer2 = test2(test.testInput)
+                    println("    ${prefix(answer2, test.test2)}Answer part 2: $answer2")
                 }
             }
             val ms = (System.nanoTime() - t) / 1e6
@@ -64,18 +62,12 @@ abstract class AocPuzzle {
         }
     }
 
-    private fun prefix(answer: Any?, expected: Any?): String {
-        return expected?.let { if (answer == it) "✅ " else "❌ " } ?: "❔ "
-    }
-
-    fun testInput(text: String, expected1: Any? = null, expected2: Any? = null, parts: Int = PART1 or PART2) {
-        testInputs += TestInput(text, expected1, expected2, parts)
-    }
-
-    data class TestInput(val text: String, val expected1: Any?, val expected2: Any?, val parts: Int)
-
-    companion object {
-        const val PART1 = 1
-        const val PART2 = 2
+    private fun prefix(answer: Any?, expected: Long?): String {
+        return when {
+            expected == null -> "❔ "
+            answer is Int -> if (answer.toLong() == expected) "✅ " else "❌ "
+            answer is Long -> if (answer == expected) "✅ " else "❌ "
+            else -> "❔ "
+        }
     }
 }

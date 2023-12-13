@@ -6,9 +6,6 @@ fun main() = Day09().start()
 
 class Day09 : AocPuzzle() {
 
-    override val answer1 = 1789635132
-    override val answer2 = 913
-
     override fun solve(input: List<String>): Pair<Any, Any> {
         val sequences = input
             .map { line -> Regex("""-?\d+""").findAll(line).map { it.value.toInt() }.toList() }
@@ -36,17 +33,5 @@ class Day09 : AocPuzzle() {
         }
 
         return deltas[0]
-    }
-
-    init {
-        testInput(
-            text = """
-                 0  3  6  9 12 15
-                 1  3  6 10 15 21
-                10 13 16 21 30 45
-            """.trimIndent(),
-            expected1 = 114,
-            expected2 = 2
-        )
     }
 }

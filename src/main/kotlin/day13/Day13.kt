@@ -7,9 +7,6 @@ fun main() = Day13().start()
 
 class Day13 : AocPuzzle() {
 
-    override val answer1 = 27502
-    override val answer2 = 31947
-
     override fun solve(input: List<String>): Pair<Any?, Any?> {
         val patterns = input
             .runningFold(mutableListOf<String>()) { group, line ->
@@ -28,7 +25,6 @@ class Day13 : AocPuzzle() {
     }
 
     class Pattern(val lines: List<String>) {
-
         private val transposed = lines[0].indices.map { col ->
             lines.map { it[col] }.joinToString(separator = "")
         }
@@ -49,29 +45,5 @@ class Day13 : AocPuzzle() {
         }
 
         private fun String.distance(b: String): Int = indices.map { if (this[it] == b[it]) 0 else 1 }.sum()
-    }
-
-    init {
-        testInput(
-            text = """
-                #.##..##.
-                ..#.##.#.
-                ##......#
-                ##......#
-                ..#.##.#.
-                ..##..##.
-                #.#.##.#.
-
-                #...##..#
-                #....#..#
-                ..##..###
-                #####.##.
-                #####.##.
-                ..##..###
-                #....#..#
-            """.trimIndent(),
-            expected1 = 405,
-            expected2 = 400
-        )
     }
 }

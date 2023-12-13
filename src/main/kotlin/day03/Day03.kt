@@ -1,20 +1,6 @@
 package day03
 
-import parseTestInput
 import readInput
-
-val testInput = parseTestInput("""
-    467..114..
-    ...*......
-    ..35..633.
-    ......#...
-    617*......
-    .....+.58.
-    ..592.....
-    ......755.
-    ...${'$'}.*....
-    .664.598..
-""")
 
 fun main() {
     val symbols = mutableMapOf<Coordinate, Symbol>()
