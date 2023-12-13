@@ -11,14 +11,14 @@ class Day13 : AocPuzzle() {
     override val answer2 = 31947
 
     override fun solve(input: List<String>): Pair<Any?, Any?> {
-        val patterns = input.fold(mutableListOf(mutableListOf<String>())) { groups, line ->
-            groups.apply {
+        val patterns = buildList {
+            input.plus("").fold(mutableListOf<String>()) { group, line ->
                 when {
-                    line.isBlank() -> add(mutableListOf())
-                    else -> last().add(line)
+                    line.isBlank() -> mutableListOf<String>().also { add(Pattern(group)) }
+                    else -> group.also { it.add(line) }
                 }
             }
-        }.map { Pattern(it) }
+        }
 
         val answer1 = patterns.sumOf {
             100 * it.findReflectionCenterRow(0) + it.findReflectionCenterCol(0)
