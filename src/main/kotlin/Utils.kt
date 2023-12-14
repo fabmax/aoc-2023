@@ -22,6 +22,13 @@ fun printColored(text: String, fg: AnsiColor? = null, bg: AnsiColor? = null) {
     print("\u001b[${fgCode}${sep}${bgCode}m$text\u001B[0m")
 }
 
+inline fun <R> timed(block: () -> R): R {
+    val t = System.nanoTime()
+    val result = block()
+    println("%.3f ms".format((System.nanoTime() - t) / 1e6))
+    return result
+}
+
 @Suppress("unused")
 enum class AnsiColor(val fg: Int, val bg: Int) {
     BLACK(30, 40),

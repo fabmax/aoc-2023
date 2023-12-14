@@ -1,6 +1,7 @@
 package day14
 
 import AocPuzzle
+import timed
 
 fun main() = Day14().start()
 
@@ -9,8 +10,13 @@ class Day14 : AocPuzzle() {
         val grid1 = RockGrid(input)
         grid1.tiltNorth()
         val answer1 = grid1.computeWeight()
-
         val answer2 = part2(input)
+
+//        for (i in 0..10) {
+//            timed {
+//                part2(input)
+//            }
+//        }
 
         return answer1 to answer2
     }
@@ -36,7 +42,6 @@ class Day14 : AocPuzzle() {
     }
 
     class RockGrid(input: List<String>) {
-
         // input is square
         val size = input.size
         val array = CharArray(size * size)
@@ -109,24 +114,20 @@ class Day14 : AocPuzzle() {
         inline fun tilt(getAt: (Int, Int) -> Char, setAt: (Int, Int, Char) -> Unit) {
             for (col in 0 until size) {
                 var scanPos = 0
-
                 while (scanPos < size) {
                     var rockCount = 0
                     val scanStart = scanPos
 
                     while (scanPos < size) {
-                        val c = getAt(col, scanPos++)
-
-                        if (c == '#') {
-                            break
-                        } else if (c == 'O') {
-                            rockCount++
+                        when (getAt(col, scanPos++)) {
+                            '#' -> break
+                            'O' -> rockCount++
                         }
                     }
-
                     for (j in scanStart until scanStart + rockCount) {
                         setAt(col, j, 'O')
                     }
+
                     if (scanStart + rockCount < scanPos) {
                         for (j in scanStart + rockCount until scanPos - 1) {
                             setAt(col, j, '.')
