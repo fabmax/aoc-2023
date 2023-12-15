@@ -4,7 +4,7 @@ Solutions to all puzzles (so  far) of [Advent of code 2023](https://adventofcode
 
 ## Results
 
-So far, all [solutions](src/main/kotlin) work for both parts. There are few notable days:
+So far, all [solutions](src/main/kotlin) work for both parts. There are a few notable days:
 
 - **[Day 5:](src/main/kotlin/day05/Day05.kt) If You Give A Seed A Fertilizer**
   
@@ -21,7 +21,7 @@ So far, all [solutions](src/main/kotlin) work for both parts. There are few nota
 - **[Day 12:](src/main/kotlin/day12/Day12.kt) Hot Springs**
 
   I struggled a lot with part2. After reading a few tips and discussions on that puzzle, I solved it eventually using a
-  [memoized](https://en.wikipedia.org/wiki/Memoization) recursion.    
+  [memoized](https://en.wikipedia.org/wiki/Memoization) recursion (what seems to be a common technique but was completely new to me).
 
 
 - **Day 14: Parabolic Reflector Dish**
@@ -31,7 +31,7 @@ So far, all [solutions](src/main/kotlin) work for both parts. There are few nota
   that, my own kotlin 3D game engine :smile:
 
   For my [regular solution](src/main/kotlin/day14/Day14.kt) I went for speed instead of elegance: After a few
-  warmup-iterations, the part 2 result completes in about 15 ms (on a pretty fast CPU).
+  warmup-iterations, the part 2 result completes in under 10 ms (Java 21, Ryzen 7950X, Ubuntu).
 
 ## Running the Puzzles
 

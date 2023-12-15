@@ -9,33 +9,33 @@ class Day14 : AocPuzzle() {
     override fun solve(input: List<String>): Pair<Any?, Any?> {
         val grid1 = RockGrid(input)
         grid1.tiltNorth()
-        val answer1 = grid1.computeWeight()
+        val answer1 = grid1.computeWeightAndHash().first
         val answer2 = part2(input)
 
-//        for (i in 0..10) {
-//            timed {
-//                part2(input)
-//            }
-//        }
+        for (i in 0..10) {
+            timed {
+                part2(input)
+            }
+        }
 
         return answer1 to answer2
     }
 
     fun part2(input: List<String>): Int {
         val grid = RockGrid(input)
-        val arrangements = mutableMapOf<String, Int>()
+        val arrangements = mutableMapOf<Long, Int>()
         val weights = mutableListOf<Int>()
 
         var cycleI = 0
-        var arrangement = grid.toString()
-        while (arrangement !in arrangements.keys) {
-            arrangements[arrangement] = cycleI++
-            weights += grid.computeWeight()
+        var (weight, hash) = grid.computeWeightAndHash()
+        while (hash !in arrangements.keys) {
+            arrangements[hash] = cycleI++
+            weights += weight
             grid.spinCycle()
-            arrangement = grid.toString()
+            grid.computeWeightAndHash().let { (w, h) -> weight = w; hash = h }
         }
 
-        val cycleStart = arrangements[arrangement]!!
+        val cycleStart = arrangements[hash]!!
         val cyclePeriod = cycleI - cycleStart
         val finalIndex = (1_000_000_000 - cycleStart) % cyclePeriod
         return weights[cycleStart + finalIndex]
@@ -65,17 +65,20 @@ class Day14 : AocPuzzle() {
             }
         }
 
-        fun computeWeight(): Int {
+        fun computeWeightAndHash(): Pair<Int, Long> {
             var weight = 0
+            var hash = 0L
             for (y in 0 until size) {
                 val fac = size - y
                 for (x in 0 until size) {
-                    if (get(x, y) == 'O') {
+                    val t = get(x, y)
+                    hash = hash * 31 + t.code
+                    if (t == 'O') {
                         weight += fac
                     }
                 }
             }
-            return weight
+            return weight to hash
         }
 
         operator fun get(x: Int, y: Int): Char = array[y * size + x]
