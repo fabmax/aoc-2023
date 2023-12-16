@@ -43,7 +43,7 @@ Moreover, test-input can be specified in separate `.txt` files in the same direc
 test input and so on. Multiple test inputs for the same day can be given by appending an extra number:
 `day02_test1.txt`, `day02_test2.txt`, etc.
 
-Test input files are expected to start with a single line of meta-data:
+Test input files are expected to start with a single containing the expected results (if already known):
 ```
 test1=?; test2=?; part1=?; part2=?
 
