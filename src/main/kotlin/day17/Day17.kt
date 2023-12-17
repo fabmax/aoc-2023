@@ -20,30 +20,26 @@ class Day17 : AocPuzzle() {
 typealias OpenNode = Pair<Int, TravelState>
 
 fun dijkstra(start: Vec2i, dest: Vec2i, map: List<String>, minStraight: Int, maxStraight: Int): Int {
-    val costs = mutableMapOf<TravelState, Int>()
-    val open = PriorityQueue<OpenNode>(compareBy { (cost, _) -> cost })
+    val costs = IntArray(2  shl 22) { Int.MAX_VALUE }
+    val open = PriorityQueue<OpenNode>(compareBy { it.first })
 
     val startState = TravelState(start, TravelDir.RT, 1)
-    costs[startState] = map.getCost(startState)
+    costs[startState.encoded] = map.getCost(startState)
     open += OpenNode(0, startState)
 
     while (open.isNotEmpty()) {
-        val (cost, state) = open.poll()
+        val state = open.poll().second
         if (state.pos == dest) {
-            return cost
+            return state.minCost
         }
 
         state.nexts(map, minStraight, maxStraight).forEach {
-            val oldCost = costs[it] ?: Int.MAX_VALUE
-            val newCost = cost + map.getCost(it)
+            val oldCost = costs[it.encoded]
+            val newCost = state.minCost + map.getCost(it)
             if (newCost < oldCost) {
-                it.prev = state
-
-                check (state.dir != it.dir || state.straightCnt < it.straightCnt)
-                check (it.pos - it.dir.step == state.pos)
-
-                costs[it] = newCost
-                open += OpenNode(newCost, it)
+                costs[it.encoded] = newCost
+                it.minCost = newCost
+                open += OpenNode(newCost - it.pos.x - it.pos.y, it)
             }
         }
     }
@@ -59,31 +55,29 @@ data class TravelState(
     val dir: TravelDir,
     val straightCnt: Int
 ) {
-    var prev: TravelState? = null
+    val encoded: Int = (pos.y shl (14)) + (pos.x shl 6) + (straightCnt.shl(2)) + dir.ordinal
+    var minCost = 0
 
     fun nexts(map: List<String>, minStraight: Int, maxStraight: Int): List<TravelState> {
-        if (straightCnt < minStraight) {
-            return listOf(TravelState(pos + dir.step, dir, straightCnt + 1)).filter {
+        return if (straightCnt < minStraight) {
+            listOf(TravelState(pos + dir.step, dir, straightCnt + 1)).filter {
                 it.pos.x in map[0].indices && it.pos.y in map.indices
             }
-        }
 
-        val opp = when (dir) {
-            TravelDir.UP -> TravelDir.DN
-            TravelDir.DN -> TravelDir.UP
-            TravelDir.LT -> TravelDir.RT
-            TravelDir.RT -> TravelDir.LT
-        }
-        return TravelDir.entries.map {
-            val cnt = if (it == dir) straightCnt + 1 else 1
-            TravelState(pos + it.step, it, cnt)
-        }.filter {
-            it.dir != opp
-                    && it.pos.x in map[0].indices && it.pos.y in map.indices
-                    && it.straightCnt <= maxStraight
+        } else {
+            TravelDir.entries.map {
+                val cnt = if (it == dir) straightCnt + 1 else 1
+                TravelState(pos + it.step, it, cnt)
+            }.filter {
+                it.dir.step dot dir.step >= 0
+                        && it.pos.x in map[0].indices && it.pos.y in map.indices
+                        && it.straightCnt <= maxStraight
+            }
         }
     }
 }
+
+infix fun Vec2i.dot(other: Vec2i) = x * other.x + y * other.y
 
 enum class TravelDir(val step: Vec2i) {
     UP(Vec2i(0, -1)),
