@@ -135,12 +135,8 @@ class Day14 : AocPuzzle() {
                         for (j in scanStart + rockCount until scanPos - 1) {
                             setAt(col, j, '.')
                         }
-                        if (scanPos == size) {
-                            val c = getAt(col, scanPos - 1)
-                            val s = if (c == 'O') '.' else c
-                            setAt(col, scanPos - 1, s)
-                        } else {
-                            setAt(col, scanPos - 1, '#')
+                        if (scanPos == size && getAt(col, scanPos - 1) == 'O') {
+                            setAt(col, scanPos - 1, '.')
                         }
                     }
                 }
