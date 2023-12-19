@@ -36,7 +36,8 @@ So far, all [solutions](src/main/kotlin) work for both parts. There are a few no
 
 - **[Day 19:](src/main/kotlin/day19/Day19.kt) Aplenty**
   Another straight-forward part 1 followed by a pretty difficult part 2. After struggling a bit with range bounds
-  it worked out ok.
+  it worked out ok. There's also a rather useless [brute force](src/main/kotlin/day19/Day19.kt) version, which would
+  take about 2.9 days to complete part 2 on my machine.
 
 ## Running the Puzzles
 
