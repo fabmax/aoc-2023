@@ -3,7 +3,7 @@ fun findPrimeFactors(number: Int, primes: List<Int>): List<Int> {
 }
 
 inline fun <T> List<T>.splitBy(predicate: (T) -> Boolean): List<List<T>> {
-    return (listOf(-1) + indices.filter { predicate(get(it)) } + listOf(lastIndex))
+    return (listOf(-1) + indices.filter { predicate(get(it)) } + listOf(size))
         .zipWithNext { from, to -> subList(from + 1, to) }
 }
 
