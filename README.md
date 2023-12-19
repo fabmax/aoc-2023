@@ -33,6 +33,11 @@ So far, all [solutions](src/main/kotlin) work for both parts. There are a few no
   For my [regular solution](src/main/kotlin/day14/Day14.kt) I went for speed instead of elegance: After a few
   warmup-iterations, the part 2 result completes in under 10 ms (Java 21, Ryzen 7950X, Ubuntu).
 
+
+- **[Day 19:](src/main/kotlin/day19/Day19.kt) Aplenty**
+  Another straight-forward part 1 followed by a pretty difficult part 2. After struggling a bit with range bounds
+  it worked out ok.
+
 ## Running the Puzzles
 
 In order to run the puzzles, you need to place your puzzle input into correctly named `.txt` files in the `inputs/` directory:
@@ -43,7 +48,7 @@ Moreover, test-input can be specified in separate `.txt` files in the same direc
 test input and so on. Multiple test inputs for the same day can be given by appending an extra number:
 `day02_test1.txt`, `day02_test2.txt`, etc.
 
-Test input files are expected to start with a single containing the expected results (if already known):
+Test input files are expected to start with a single line containing the expected results (if already known):
 ```
 test1=?; test2=?; part1=?; part2=?
 

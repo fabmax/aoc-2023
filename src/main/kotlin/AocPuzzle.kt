@@ -4,7 +4,7 @@ abstract class AocPuzzle {
 
     val inputData = InputData(day)
 
-    protected abstract fun solve(input: List<String>): Pair<Any?, Any?>
+    abstract fun solve(input: List<String>): Pair<Any?, Any?>
 
     protected open fun test1(input: List<String>): Any? {
         return solve(input).first
