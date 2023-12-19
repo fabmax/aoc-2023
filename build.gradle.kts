@@ -13,7 +13,7 @@ dependencies {
     implementation("de.fabmax.kool:kool-core:0.14.0-SNAPSHOT")
     implementation("de.fabmax.kool:kool-physics:0.14.0-SNAPSHOT")
 
-    listOf("natives-windows", "natives-linux", "natives-macos").forEach { platform ->
+    listOf("natives-windows", "natives-linux", "natives-macos", "natives-macos-arm64").forEach { platform ->
         val lwjglVersion = "3.3.3"
         val physxJniVersion = "2.3.1"
 
