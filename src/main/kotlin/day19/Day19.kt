@@ -79,51 +79,41 @@ class Day19 : AocPuzzle() {
         val elseNext = compares.substringAfterLast(",").removeSuffix("}")
         val rules = compares.substringBeforeLast(",")
             .split(",")
-            .map { WorkflowRule(it) }
+            .map { Rule(it) }
         return Workflow(name, rules, elseNext)
     }
 
-    fun WorkflowRule(encoded: String): WorkflowRule {
-        fun Char.propIndex(): Int = when(this) {
-            'x' -> 0
-            'm' -> 1
-            'a' -> 2
-            's' -> 3
-            else -> error("unreachable")
-        }
+    fun Rule(encoded: String): Rule {
+        val ruleProps = listOf('x', 'm', 'a', 's')
 
-        val (compare, next) = encoded.split(":")
+        val (ruleDef, next) = encoded.split(":")
         return if ('<' in encoded) {
-            val (prop, value) = compare.split("<")
-            WorkflowRule(prop[0].propIndex(), '<', value.toInt(), next)
+            val (prop, value) = ruleDef.split("<")
+            RuleLt(ruleProps.indexOf(prop[0]), value.toInt(), next)
         } else {
-            val (prop, value) = compare.split(">")
-            WorkflowRule(prop[0].propIndex(), '>', value.toInt(), next)
+            val (prop, value) = ruleDef.split(">")
+            RuleGt(ruleProps.indexOf(prop[0]), value.toInt(), next)
         }
     }
 
-    data class Workflow(val name: String, val rules: List<WorkflowRule>, val elseNext: String)
+    data class Workflow(val name: String, val rules: List<Rule>, val elseNext: String)
 
-    data class WorkflowRule(val prop: Int, val op: Char, val thresh: Int, val next: String) {
-        fun test(part: Part): Boolean {
-            return if (op == '>') part[prop] > thresh else part[prop] < thresh
-        }
+    sealed class Rule(val prop: Int, val thresh: Int, val next: String) {
+        abstract fun test(part: Part): Boolean
+        abstract fun applyToRange(range: PartRange)
+        abstract fun excludeFromRange(range: PartRange)
+    }
 
-        fun applyToRange(range: PartRange) {
-            if (op == '>') {
-                range.lo[prop] = max(range.lo[prop], thresh)
-            } else {
-                range.hi[prop] = min(range.hi[prop], thresh-1)
-            }
-        }
+    class RuleLt(prop: Int, thresh: Int, next: String) : Rule(prop, thresh, next) {
+        override fun test(part: Part): Boolean = part[prop] < thresh
+        override fun applyToRange(range: PartRange) { range.hi[prop] = min(range.hi[prop], thresh-1) }
+        override fun excludeFromRange(range: PartRange) { range.lo[prop] = max(range.lo[prop], thresh-1) }
+    }
 
-        fun excludeFromRange(range: PartRange) {
-            if (op == '<') {
-                range.lo[prop] = max(range.lo[prop], thresh-1)
-            } else {
-                range.hi[prop] = min(range.hi[prop], thresh)
-            }
-        }
+    class RuleGt(prop: Int, thresh: Int, next: String) : Rule(prop, thresh, next) {
+        override fun test(part: Part): Boolean = part[prop] > thresh
+        override fun applyToRange(range: PartRange) { range.lo[prop] = max(range.lo[prop], thresh) }
+        override fun excludeFromRange(range: PartRange) {  range.hi[prop] = min(range.hi[prop], thresh) }
     }
 
     class PartRange {
