@@ -86,72 +86,72 @@ class Day19BruteForce : AocPuzzle() {
         return accepted
     }
 
-    class Workflows(val workflows: Map<String, Workflow>) {
-        val workflowIds = workflows.values.mapIndexed { i, workflow -> workflow to i }.toMap()
-
-        val nexts = IntArray(workflows.size)
-        val ruleOffsets = IntArray(workflows.size)
-        val rules = IntArray(workflows.values.sumOf { it.rules.size })
-
-        val startIdx = workflows["in"]!!.id
-        val acceptIdx = Day19.ACCEPT.id
-        val rejectIdx = Day19.REJECT.id
-
-        init {
-            val orderedWfs = workflows.values.sortedBy { it.id }
-            var nextRuleIdx = 0
-            orderedWfs.forEachIndexed { i, wf ->
-                ruleOffsets[i] = (nextRuleIdx shl 16) or (nextRuleIdx + wf.rules.size)
-                nexts[i] = wf.elseNextId
-                for (j in wf.rules.indices) {
-                    rules[nextRuleIdx] = wf.rules[j].encoded
-                    nextRuleIdx++
-                }
-            }
-        }
-
-        fun isAccepted(part: IntArray): Boolean {
-            var wfIdx = startIdx
-
-            outer@
-            while (wfIdx != acceptIdx && wfIdx != rejectIdx) {
-                val offsets = ruleOffsets[wfIdx]
-                val ruleStart = offsets shr 16
-                val ruleEnd = offsets and 0xffff
-
-                for (i in ruleStart ..< ruleEnd) {
-                    val rule = rules[i]
-
-                    val op = rule and (1 shl 18)
-                    val pi = (rule and (3 shl 16)) shr 16
-                    val th = rule and 0xffff
-                    val pp = part[pi]
-
-                    if ((op == 0 && pp < th) || (op != 0 && pp > th)) {
-                        wfIdx = rule shr 20
-                        continue@outer
-                    }
-                }
-                wfIdx = nexts[wfIdx]
-            }
-            return wfIdx == acceptIdx
-        }
-
-        val Workflow.id: Int
-            get() = workflowIds[this]!!
-        val Workflow.elseNextId: Int
-            get() = workflows[elseNext]?.id ?: -1
-        val Rule.nextId: Int
-            get() = workflows[next]?.id ?: -1
-
-        val Rule.encoded: Int
-            get() = when (this) {
-                is RuleGt -> 1 shl 18 or (prop shl 16) or thresh or (nextId shl 20)
-                is RuleLt -> (prop shl 16) or thresh or (nextId shl 20)
-            }
-    }
-
     companion object {
         private var nextWorkflowId = 0
     }
+}
+
+class Workflows(val workflows: Map<String, Workflow>) {
+    val workflowIds = workflows.values.mapIndexed { i, workflow -> workflow to i }.toMap()
+
+    val nexts = IntArray(workflows.size)
+    val ruleOffsets = IntArray(workflows.size)
+    val rules = IntArray(workflows.values.sumOf { it.rules.size })
+
+    val startIdx = workflows["in"]!!.id
+    val acceptIdx = Day19.ACCEPT.id
+    val rejectIdx = Day19.REJECT.id
+
+    init {
+        val orderedWfs = workflows.values.sortedBy { it.id }
+        var nextRuleIdx = 0
+        orderedWfs.forEachIndexed { i, wf ->
+            ruleOffsets[i] = (nextRuleIdx shl 16) or (nextRuleIdx + wf.rules.size)
+            nexts[i] = wf.elseNextId
+            for (j in wf.rules.indices) {
+                rules[nextRuleIdx] = wf.rules[j].encoded
+                nextRuleIdx++
+            }
+        }
+    }
+
+    fun isAccepted(part: IntArray): Boolean {
+        var wfIdx = startIdx
+
+        outer@
+        while (wfIdx != acceptIdx && wfIdx != rejectIdx) {
+            val offsets = ruleOffsets[wfIdx]
+            val ruleStart = offsets shr 16
+            val ruleEnd = offsets and 0xffff
+
+            for (i in ruleStart ..< ruleEnd) {
+                val rule = rules[i]
+
+                val op = rule and (1 shl 18)
+                val pi = (rule and (3 shl 16)) shr 16
+                val th = rule and 0xffff
+                val pp = part[pi]
+
+                if ((op == 0 && pp < th) || (op != 0 && pp > th)) {
+                    wfIdx = rule shr 20
+                    continue@outer
+                }
+            }
+            wfIdx = nexts[wfIdx]
+        }
+        return wfIdx == acceptIdx
+    }
+
+    val Workflow.id: Int
+        get() = workflowIds[this]!!
+    val Workflow.elseNextId: Int
+        get() = workflows[elseNext]?.id ?: -1
+    val Rule.nextId: Int
+        get() = workflows[next]?.id ?: -1
+
+    val Rule.encoded: Int
+        get() = when (this) {
+            is RuleGt -> 1 shl 18 or (prop shl 16) or thresh or (nextId shl 20)
+            is RuleLt -> (prop shl 16) or thresh or (nextId shl 20)
+        }
 }

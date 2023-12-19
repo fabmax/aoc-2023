@@ -36,8 +36,10 @@ So far, all [solutions](src/main/kotlin) work for both parts. There are a few no
 
 - **[Day 19:](src/main/kotlin/day19/Day19.kt) Aplenty**
   Another straight-forward part 1 followed by a pretty difficult part 2. After struggling a bit with range bounds
-  it worked out ok. There's also a rather useless [brute force](src/main/kotlin/day19/Day19BruteForce.kt) version,
-  which would take about 2.6 days to complete part 2 on my machine (with 1.13G part checks / second).
+  it worked out ok. Just for fun, I also implemented two rather useless brute force approaches: On
+  [CPU](src/main/kotlin/day19/Day19BruteForce.kt) (estimated time to complete: 2.6 days at 1.13G part checks / second,
+  Ryzen 7950X) as well as on [GPU](src/main/kotlin/day19/Day19Compute.kt) (estimated time to complete: 1h:56m at 36.7G
+  part checks / second, RTX4080).
 
 ## Running the Puzzles
 

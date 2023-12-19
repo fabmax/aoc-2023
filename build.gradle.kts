@@ -3,14 +3,15 @@ plugins {
 }
 
 repositories {
+    maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots") }
     mavenCentral()
 }
 
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 
-    implementation("de.fabmax.kool:kool-core:0.13.0")
-    implementation("de.fabmax.kool:kool-physics:0.13.0")
+    implementation("de.fabmax.kool:kool-core:0.14.0-SNAPSHOT")
+    implementation("de.fabmax.kool:kool-physics:0.14.0-SNAPSHOT")
 
     listOf("natives-windows", "natives-linux", "natives-macos").forEach { platform ->
         val lwjglVersion = "3.3.3"
