@@ -42,13 +42,13 @@ class Day19BruteForce : AocPuzzle() {
             thread {
                 val part = IntArray(4)
                 val workSize = 4000 / jobs
-                val low = 1 + t * workSize
-                val high = (t+1) * workSize
+                val xFrom = 1 + t * workSize
+                val xTo = (t+1) * workSize
                 var accepted = 0L
                 var total = 0L
 
                 outer@
-                for (x in low..high) {
+                for (x in xFrom..xTo) {
                     part[0] = x
                     for (m in 1..4000) {
                         part[1] = m
