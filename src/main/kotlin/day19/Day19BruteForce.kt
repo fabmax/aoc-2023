@@ -8,14 +8,10 @@ fun main() = Day19BruteForce().runPuzzle()
 
 class Day19BruteForce : AocPuzzle() {
     override fun solve(input: List<String>): Pair<Any?, Any?> {
-        val (workflowEnc, partDefs) = input.splitByBlankLines()
+        val (workflowDefs, partDefs) = input.splitByBlankLines()
 
         nextWorkflowId = 2
-        val workflowsByName = workflowEnc.map { Workflow(it) }.associateBy { it.name } + ("A" to ACCEPT) + ("R" to REJECT)
-        workflowsByName.values.forEach { wf ->
-            wf.elseNextRef = workflowsByName[wf.elseNext]
-            wf.nextNames.forEachIndexed { i, n -> wf.nexts[i] = workflowsByName[n]!! }
-        }
+        val workflowsByName = workflowDefs.map { Workflow(it) }.associateBy { it.name } + ("A" to Day19.ACCEPT) + ("R" to Day19.REJECT)
         val workflows = Workflows(workflowsByName)
 
         return part1(workflows, partDefs) to part2(workflows)
@@ -83,46 +79,16 @@ class Day19BruteForce : AocPuzzle() {
         val totalOps = totalCnt.sum()
         val totalProgress = totalOps.toDouble() / (4000L * 4000 * 4000 * 4000)
 
-        println("Stopping after %.3f s seconds\n%.3f Mops (%.3f Mops/thread), total time: %.3f days"
+        println("Stopping after %.3f s seconds\n%.3f Mops (%.3f Mops/thread), estimated total time: %.3f days"
             .format(totalTime, totalOps/1e6/totalTime, totalOps/1e6/totalTime/jobs, (totalTime / totalProgress) / 86400)
         )
 
         return accepted
     }
 
-    fun Workflow(line: String): Workflow {
-        val (name, compares) = line.split("{")
-        val elseNext = compares.substringAfterLast(",").removeSuffix("}")
-        val rules = compares.substringBeforeLast(",")
-            .split(",")
-            .map { Rule(it) }
+    class Workflows(val workflows: Map<String, Workflow>) {
+        val workflowIds = workflows.values.mapIndexed { i, workflow -> workflow to i }.toMap()
 
-        return Workflow(name, elseNext, rules)
-    }
-
-    fun Rule(encoded: String): Pair<Int, String> {
-        val ruleProps = listOf('x', 'm', 'a', 's')
-        val (ruleDef, next) = encoded.split(":")
-        val encOp = if ('<' in encoded) {
-            val (prop, value) = ruleDef.split("<")
-            (ruleProps.indexOf(prop[0]) shl 16) or value.toInt()
-        } else {
-            val (prop, value) = ruleDef.split(">")
-            1 shl 18 or (ruleProps.indexOf(prop[0]) shl 16) or value.toInt()
-        }
-        return encOp to next
-    }
-
-    class Workflow(val name: String, val elseNext: String, r: List<Pair<Int, String>>) {
-        val id = nextWorkflowId++
-        var elseNextRef: Workflow? = null
-
-        val rules = IntArray(r.size) { r[it].first }
-        val nexts = Array<Workflow?>(r.size) { null }
-        val nextNames = Array(r.size) { r[it].second }
-    }
-
-    class Workflows(workflows: Map<String, Workflow>) {
         val nexts = IntArray(workflows.size)
         val ruleOffsets = IntArray(workflows.size)
         val ruleEndOffsets = IntArray(workflows.size)
@@ -130,8 +96,8 @@ class Day19BruteForce : AocPuzzle() {
         val rulesNexts = IntArray(workflows.values.sumOf { it.rules.size })
 
         val startIdx = workflows["in"]!!.id
-        val acceptIdx = ACCEPT.id
-        val rejectIdx = REJECT.id
+        val acceptIdx = Day19.ACCEPT.id
+        val rejectIdx = Day19.REJECT.id
 
         init {
             val orderedWfs = workflows.values.sortedBy { it.id }
@@ -139,10 +105,10 @@ class Day19BruteForce : AocPuzzle() {
             orderedWfs.forEachIndexed { i, wf ->
                 ruleOffsets[i] = nextRuleIdx
                 ruleEndOffsets[i] = nextRuleIdx + wf.rules.size
-                nexts[i] = wf.elseNextRef?.id ?: -1
+                nexts[i] = wf.elseNextId
                 for (j in wf.rules.indices) {
-                    rules[nextRuleIdx] = wf.rules[j]
-                    rulesNexts[nextRuleIdx] = wf.nexts[j]!!.id
+                    rules[nextRuleIdx] = wf.rules[j].encoded
+                    rulesNexts[nextRuleIdx] = wf.rules[j].nextId
                     nextRuleIdx++
                 }
             }
@@ -173,12 +139,22 @@ class Day19BruteForce : AocPuzzle() {
             }
             return wfIdx == acceptIdx
         }
+
+        val Workflow.id: Int
+            get() = workflowIds[this]!!
+        val Workflow.elseNextId: Int
+            get() = workflows[elseNext]?.id ?: -1
+        val Rule.nextId: Int
+            get() = workflows[next]?.id ?: -1
+
+        val Rule.encoded: Int
+            get() = when (this) {
+                is RuleGt -> 1 shl 18 or (prop shl 16) or thresh
+                is RuleLt -> (prop shl 16) or thresh
+            }
     }
 
     companion object {
         private var nextWorkflowId = 0
-
-        val ACCEPT = Workflow("A", "", emptyList())
-        val REJECT = Workflow("R", "", emptyList())
     }
 }

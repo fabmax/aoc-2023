@@ -71,68 +71,68 @@ class Day19 : AocPuzzle() {
         return rules.firstOrNull { it.test(part) }?.next ?: elseNext
     }
 
-    fun Workflow(line: String): Workflow {
-        val (name, compares) = line.split("{")
-        val elseNext = compares.substringAfterLast(",").removeSuffix("}")
-        val rules = compares.substringBeforeLast(",")
-            .split(",")
-            .map { Rule(it) }
-        return Workflow(name, rules, elseNext)
-    }
-
-    fun Rule(encoded: String): Rule {
-        val ruleProps = listOf('x', 'm', 'a', 's')
-        val (ruleDef, next) = encoded.split(":")
-        return if ('<' in encoded) {
-            val (prop, value) = ruleDef.split("<")
-            RuleLt(ruleProps.indexOf(prop[0]), value.toInt(), next)
-        } else {
-            val (prop, value) = ruleDef.split(">")
-            RuleGt(ruleProps.indexOf(prop[0]), value.toInt(), next)
-        }
-    }
-
-    data class Workflow(val name: String, val rules: List<Rule>, val elseNext: String) {
-        val isTerminal: Boolean
-            get() = elseNext.isEmpty()
-    }
-
-    sealed class Rule(val prop: Int, val thresh: Int, val next: String) {
-        abstract fun test(part: Part): Boolean
-        abstract fun applyToRange(range: PartRange)
-        abstract fun excludeFromRange(range: PartRange)
-    }
-
-    class RuleLt(prop: Int, thresh: Int, next: String) : Rule(prop, thresh, next) {
-        override fun test(part: Part): Boolean = part[prop] < thresh
-        override fun applyToRange(range: PartRange) { range.ranges[prop] = range.ranges[prop].clipUpper(thresh - 1) }
-        override fun excludeFromRange(range: PartRange) { range.ranges[prop] = range.ranges[prop].clipLower(thresh) }
-    }
-
-    class RuleGt(prop: Int, thresh: Int, next: String) : Rule(prop, thresh, next) {
-        override fun test(part: Part): Boolean = part[prop] > thresh
-        override fun applyToRange(range: PartRange) { range.ranges[prop] = range.ranges[prop].clipLower(thresh + 1) }
-        override fun excludeFromRange(range: PartRange) {  range.ranges[prop] = range.ranges[prop].clipUpper(thresh) }
-    }
-
-    class PartRange {
-        val ranges = Array(4) { 1..4000 }
-
-        fun copy(): PartRange {
-            val range = PartRange()
-            for (i in 0..3) {
-                range.ranges[i] = ranges[i]
-            }
-            return range
-        }
-
-        val combinations: Long
-            get() = (0..3).map { ranges[it].size }.fold(1L) { acc, it -> acc * it }
-    }
-
     companion object {
         val NUMBERS = Regex("""(\d+)""")
         val ACCEPT = Workflow("A", emptyList(), "")
         val REJECT = Workflow("R", emptyList(), "")
     }
+}
+
+fun Workflow(line: String): Workflow {
+    val (name, compares) = line.split("{")
+    val elseNext = compares.substringAfterLast(",").removeSuffix("}")
+    val rules = compares.substringBeforeLast(",")
+        .split(",")
+        .map { Rule(it) }
+    return Workflow(name, rules, elseNext)
+}
+
+fun Rule(encoded: String): Rule {
+    val ruleProps = listOf('x', 'm', 'a', 's')
+    val (ruleDef, next) = encoded.split(":")
+    return if ('<' in encoded) {
+        val (prop, value) = ruleDef.split("<")
+        RuleLt(ruleProps.indexOf(prop[0]), value.toInt(), next)
+    } else {
+        val (prop, value) = ruleDef.split(">")
+        RuleGt(ruleProps.indexOf(prop[0]), value.toInt(), next)
+    }
+}
+
+data class Workflow(val name: String, val rules: List<Rule>, val elseNext: String) {
+    val isTerminal: Boolean
+        get() = elseNext.isEmpty()
+}
+
+sealed class Rule(val prop: Int, val thresh: Int, val next: String) {
+    abstract fun test(part: Part): Boolean
+    abstract fun applyToRange(range: PartRange)
+    abstract fun excludeFromRange(range: PartRange)
+}
+
+class RuleLt(prop: Int, thresh: Int, next: String) : Rule(prop, thresh, next) {
+    override fun test(part: Part): Boolean = part[prop] < thresh
+    override fun applyToRange(range: PartRange) { range.ranges[prop] = range.ranges[prop].clipUpper(thresh - 1) }
+    override fun excludeFromRange(range: PartRange) { range.ranges[prop] = range.ranges[prop].clipLower(thresh) }
+}
+
+class RuleGt(prop: Int, thresh: Int, next: String) : Rule(prop, thresh, next) {
+    override fun test(part: Part): Boolean = part[prop] > thresh
+    override fun applyToRange(range: PartRange) { range.ranges[prop] = range.ranges[prop].clipLower(thresh + 1) }
+    override fun excludeFromRange(range: PartRange) {  range.ranges[prop] = range.ranges[prop].clipUpper(thresh) }
+}
+
+class PartRange {
+    val ranges = Array(4) { 1..4000 }
+
+    fun copy(): PartRange {
+        val range = PartRange()
+        for (i in 0..3) {
+            range.ranges[i] = ranges[i]
+        }
+        return range
+    }
+
+    val combinations: Long
+        get() = (0..3).map { ranges[it].size }.fold(1L) { acc, it -> acc * it }
 }
