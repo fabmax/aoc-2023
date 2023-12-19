@@ -11,6 +11,16 @@ fun List<String>.splitByBlankLines(): List<List<String>> {
     return splitBy { it.isBlank() }
 }
 
+val IntRange.size: Int get() = if (isEmpty()) 0 else last - first + 1
+
+fun IntRange.clipLower(min: Int): IntRange {
+    return (kotlin.math.max(first, min)..last)
+}
+
+fun IntRange.clipUpper(max: Int): IntRange {
+    return (first..kotlin.math.min(last, max))
+}
+
 fun findPrimes(upperLimit: Int): List<Int> = (2..upperLimit).filter { it.isPrime }
 
 val Int.isPrime: Boolean get() = (2 .. (this / 2)).none { this % it == 0 }

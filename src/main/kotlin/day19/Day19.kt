@@ -1,9 +1,10 @@
 package day19
 
 import AocPuzzle
+import clipLower
+import clipUpper
+import size
 import splitByBlankLines
-import kotlin.math.max
-import kotlin.math.min
 
 fun main() = Day19().start()
 
@@ -26,33 +27,29 @@ class Day19 : AocPuzzle() {
         val acceptedRanges = mutableListOf<PartRange>()
 
         fun Workflow.traverse(inRange: PartRange) {
-            inRange.path += this
             rules.forEach {
                 val outRange = inRange.copy()
                 it.applyToRange(outRange)
-                if (outRange.isPossible) {
-                    val nextWorkflow = workflows[it.next]!!
-                    if (nextWorkflow === ACCEPT) {
-                        outRange.path += ACCEPT
-                        acceptedRanges += outRange
-                    } else if (nextWorkflow !== REJECT) {
-                        nextWorkflow.traverse(outRange)
-                    }
+
+                val nextWorkflow = workflows[it.next]!!
+                if (!nextWorkflow.isTerminal) {
+                    nextWorkflow.traverse(outRange)
+                } else if (nextWorkflow === ACCEPT) {
+                    acceptedRanges += outRange
                 }
                 it.excludeFromRange(inRange)
             }
-            val elseWf = workflows[elseNext]
-            if (elseWf === ACCEPT) {
+
+            val elseWf = workflows[elseNext]!!
+            if (!elseWf.isTerminal) {
+                elseWf.traverse(inRange)
+            } else if (elseWf === ACCEPT) {
                 acceptedRanges += inRange
-            } else if (elseWf !== REJECT) {
-                elseWf!!.traverse(inRange)
             }
         }
 
         workflows["in"]!!.traverse(PartRange())
-        //println("${acceptedRanges.size} accepted ranges")
-        //acceptedRanges.forEach { println("$it  => ${it.path.map { wf -> wf.name }.joinToString(" -> ")}") }
-        return acceptedRanges.sumOf { it.getCombinations() }
+        return acceptedRanges.sumOf { it.combinations }
     }
 
     fun part1(workflows: Map<String, Workflow>, parts: List<Part>): Int {
@@ -85,7 +82,6 @@ class Day19 : AocPuzzle() {
 
     fun Rule(encoded: String): Rule {
         val ruleProps = listOf('x', 'm', 'a', 's')
-
         val (ruleDef, next) = encoded.split(":")
         return if ('<' in encoded) {
             val (prop, value) = ruleDef.split("<")
@@ -96,7 +92,10 @@ class Day19 : AocPuzzle() {
         }
     }
 
-    data class Workflow(val name: String, val rules: List<Rule>, val elseNext: String)
+    data class Workflow(val name: String, val rules: List<Rule>, val elseNext: String) {
+        val isTerminal: Boolean
+            get() = elseNext.isEmpty()
+    }
 
     sealed class Rule(val prop: Int, val thresh: Int, val next: String) {
         abstract fun test(part: Part): Boolean
@@ -106,44 +105,29 @@ class Day19 : AocPuzzle() {
 
     class RuleLt(prop: Int, thresh: Int, next: String) : Rule(prop, thresh, next) {
         override fun test(part: Part): Boolean = part[prop] < thresh
-        override fun applyToRange(range: PartRange) { range.hi[prop] = min(range.hi[prop], thresh-1) }
-        override fun excludeFromRange(range: PartRange) { range.lo[prop] = max(range.lo[prop], thresh-1) }
+        override fun applyToRange(range: PartRange) { range.ranges[prop] = range.ranges[prop].clipUpper(thresh - 1) }
+        override fun excludeFromRange(range: PartRange) { range.ranges[prop] = range.ranges[prop].clipLower(thresh) }
     }
 
     class RuleGt(prop: Int, thresh: Int, next: String) : Rule(prop, thresh, next) {
         override fun test(part: Part): Boolean = part[prop] > thresh
-        override fun applyToRange(range: PartRange) { range.lo[prop] = max(range.lo[prop], thresh) }
-        override fun excludeFromRange(range: PartRange) {  range.hi[prop] = min(range.hi[prop], thresh) }
+        override fun applyToRange(range: PartRange) { range.ranges[prop] = range.ranges[prop].clipLower(thresh + 1) }
+        override fun excludeFromRange(range: PartRange) {  range.ranges[prop] = range.ranges[prop].clipUpper(thresh) }
     }
 
     class PartRange {
-        val lo = intArrayOf(0, 0, 0, 0)
-        val hi = intArrayOf(4000, 4000, 4000, 4000)
-
-        val path = mutableListOf<Workflow>()
-
-        val isPossible: Boolean
-            get() = hi.mapIndexed { i, h -> h > lo[i] }.all { it }
+        val ranges = Array(4) { 1..4000 }
 
         fun copy(): PartRange {
             val range = PartRange()
             for (i in 0..3) {
-                range.lo[i] = lo[i]
-                range.hi[i] = hi[i]
+                range.ranges[i] = ranges[i]
             }
-            range.path += path
             return range
         }
 
-        fun getCombinations(): Long {
-            return (0..3).map { hi[it] - lo[it] }.fold(1L) { acc, it -> acc * it }
-        }
-
-        override fun toString(): String = buildString {
-            listOf("x", "m", "a", "s").forEachIndexed { i, n ->
-                append("%4d < $n < %4d | ".format(lo[i], hi[i]))
-            }
-        }
+        val combinations: Long
+            get() = (0..3).map { ranges[it].size }.fold(1L) { acc, it -> acc * it }
     }
 
     companion object {
