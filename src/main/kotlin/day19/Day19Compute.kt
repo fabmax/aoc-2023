@@ -42,9 +42,9 @@ fun main() = KoolApplication { ctx ->
                             workflowIdx set nextWorkflowIdx
                             fori(ruleStart, ruleEnd) { i ->
                                 val rule = int1Var(storageRead(workflowStorage, int2Value(i, 2.const)))
-                                val op = rule and (1 shl 18).const
-                                val compI = (rule and (3 shl 16).const) shr 16.const
-                                val thresh = rule and 0xffff.const
+                                val op = int1Var(rule and (1 shl 18).const)
+                                val compI = int1Var((rule and (3 shl 16).const) shr 16.const)
+                                val thresh = int1Var(rule and 0xffff.const)
 
                                 val partVal = int1Var(part.x)
                                 `if`(compI eq 1.const) {
