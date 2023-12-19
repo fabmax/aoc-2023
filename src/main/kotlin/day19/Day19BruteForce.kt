@@ -91,9 +91,7 @@ class Day19BruteForce : AocPuzzle() {
 
         val nexts = IntArray(workflows.size)
         val ruleOffsets = IntArray(workflows.size)
-        val ruleEndOffsets = IntArray(workflows.size)
         val rules = IntArray(workflows.values.sumOf { it.rules.size })
-        val rulesNexts = IntArray(workflows.values.sumOf { it.rules.size })
 
         val startIdx = workflows["in"]!!.id
         val acceptIdx = Day19.ACCEPT.id
@@ -103,12 +101,10 @@ class Day19BruteForce : AocPuzzle() {
             val orderedWfs = workflows.values.sortedBy { it.id }
             var nextRuleIdx = 0
             orderedWfs.forEachIndexed { i, wf ->
-                ruleOffsets[i] = nextRuleIdx
-                ruleEndOffsets[i] = nextRuleIdx + wf.rules.size
+                ruleOffsets[i] = (nextRuleIdx shl 16) or (nextRuleIdx + wf.rules.size)
                 nexts[i] = wf.elseNextId
                 for (j in wf.rules.indices) {
                     rules[nextRuleIdx] = wf.rules[j].encoded
-                    rulesNexts[nextRuleIdx] = wf.rules[j].nextId
                     nextRuleIdx++
                 }
             }
@@ -117,11 +113,12 @@ class Day19BruteForce : AocPuzzle() {
         fun isAccepted(part: IntArray): Boolean {
             var wfIdx = startIdx
 
+            outer@
             while (wfIdx != acceptIdx && wfIdx != rejectIdx) {
-                val ruleStart = ruleOffsets[wfIdx]
-                val ruleEnd = ruleEndOffsets[wfIdx]
+                val offsets = ruleOffsets[wfIdx]
+                val ruleStart = offsets shr 16
+                val ruleEnd = offsets and 0xffff
 
-                var nextWf = -1
                 for (i in ruleStart ..< ruleEnd) {
                     val rule = rules[i]
 
@@ -131,11 +128,11 @@ class Day19BruteForce : AocPuzzle() {
                     val pp = part[pi]
 
                     if ((op == 0 && pp < th) || (op != 0 && pp > th)) {
-                        nextWf = rulesNexts[i]
-                        break
+                        wfIdx = rule shr 20
+                        continue@outer
                     }
                 }
-                wfIdx = if (nextWf != -1) nextWf else nexts[wfIdx]
+                wfIdx = nexts[wfIdx]
             }
             return wfIdx == acceptIdx
         }
@@ -149,8 +146,8 @@ class Day19BruteForce : AocPuzzle() {
 
         val Rule.encoded: Int
             get() = when (this) {
-                is RuleGt -> 1 shl 18 or (prop shl 16) or thresh
-                is RuleLt -> (prop shl 16) or thresh
+                is RuleGt -> 1 shl 18 or (prop shl 16) or thresh or (nextId shl 20)
+                is RuleLt -> (prop shl 16) or thresh or (nextId shl 20)
             }
     }
 
