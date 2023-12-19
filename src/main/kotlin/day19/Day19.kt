@@ -23,7 +23,7 @@ class Day19 : AocPuzzle() {
         return part1(workflows, parts) to part2(workflows)
     }
 
-    fun part2(workflows: Map<String, Workflow>): Long {
+    fun part2(workflows: Map<String, Workflow>, xRange: IntRange = 1..4000): Long {
         val acceptedRanges = mutableListOf<PartRange>()
 
         fun Workflow.traverse(inRange: PartRange) {
@@ -48,7 +48,9 @@ class Day19 : AocPuzzle() {
             }
         }
 
-        workflows["in"]!!.traverse(PartRange())
+        val rng = PartRange()
+        rng.ranges[0] = xRange
+        workflows["in"]!!.traverse(rng)
         return acceptedRanges.sumOf { it.combinations }
     }
 

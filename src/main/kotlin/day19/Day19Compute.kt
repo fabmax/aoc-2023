@@ -87,7 +87,11 @@ fun main() = KoolApplication { ctx ->
             }
         }
 
-        val (workflows, storage) = loadWorkflows()
+        val input = File("inputs/day19.txt").readLines()
+        val (workflowDefs, _) = input.splitByBlankLines()
+        val workflowsByName = workflowDefs.map { Workflow(it) }.associateBy { it.name } + ("A" to Day19.ACCEPT) + ("R" to Day19.REJECT)
+
+        val (workflows, storage) = loadWorkflows(workflowsByName)
         val acceptCounts = StorageTexture2d(4000, 4000, TexFormat.R_I32)
 
         computeShader.storage2d("workflowStorage", storage)
@@ -96,43 +100,50 @@ fun main() = KoolApplication { ctx ->
         computeShader.uniform1i("acceptIndex", workflows.acceptIdx)
         computeShader.uniform1i("rejectIndex", workflows.rejectIdx)
 
-        var uniformX by computeShader.uniform1i("ux", 1)
+        var x by computeShader.uniform1i("ux", 1)
         var fromS by computeShader.uniform1i("fromS", 1)
         var toS by computeShader.uniform1i("toS", 41)
 
         val computePass = ComputeRenderPass(computeShader, 4000, 4000)
+        val computeTask = computePass.tasks[0]
 
         val startT = System.nanoTime()
 
         val xLimit = 10
-        var x = 1
         var subStep = 0
-        onUpdate {
-            if (computePass in offscreenPasses) {
-                if (subStep < 100) {
-                    fromS = subStep * 40 + 1
-                    toS = (subStep + 1) * 40 + 1
-                    subStep++
 
-                } else {
-                    println("  progress: %.1f %% (%.3f %% total) ...".format(100.0 * x / xLimit, 100.0 * x / 4000))
-                    if (x >= xLimit) {
-                        val time = (System.nanoTime() - startT) / 1e9
-                        val totalTime = time * (4000.0 / xLimit)
-                        val totalH = (totalTime / 3600).toInt()
-                        val totalM = ((totalTime % 3600) / 60).toInt()
-                        val totalOps = xLimit * 4000L * 4000L * 4000L
+        // xLimit 400:
+        // cpu: 12916024642920
+        // gpu: 12916024642920
+        // Stopping after 567,831 s seconds
+        // 45,084 Gops, estimated total time: 1h:34m
 
-                        println("Stopping after %.3f s seconds\n%.3f Gops, estimated total time: %dh:%02dm"
-                            .format(time, totalOps / 1e9 / time, totalH, totalM)
-                        )
-                        removeOffscreenPass(computePass)
-                        readAcceptCounts(acceptCounts)
-                    }
+        computeTask.onBeforeDispatch {
+            fromS = subStep * 40 + 1
+            toS = (subStep + 1) * 40 + 1
+        }
 
-                    subStep = 0
-                    uniformX = ++x
+        computeTask.onAfterDispatch {
+            if (++subStep == 100) {
+                println("  progress: %.1f %% (%.3f %% total) ...".format(100.0 * x / xLimit, 100.0 * x / 4000))
+                if (x >= xLimit) {
+                    val time = (System.nanoTime() - startT) / 1e9
+                    val totalTime = time * (4000.0 / xLimit)
+                    val totalH = (totalTime / 3600).toInt()
+                    val totalM = ((totalTime % 3600) / 60).toInt()
+                    val totalOps = xLimit * 4000L * 4000L * 4000L
+
+                    println("Stopping after %.3f s seconds\n%.3f Gops, estimated total time: %dh:%02dm"
+                        .format(time, totalOps / 1e9 / time, totalH, totalM)
+                    )
+                    removeOffscreenPass(computePass)
+
+                    val expectedCount = Day19().part2(workflowsByName, 1..xLimit)
+                    readAcceptCounts(acceptCounts, expectedCount)
                 }
+
+                subStep = 0
+                x++
             }
         }
 
@@ -140,7 +151,7 @@ fun main() = KoolApplication { ctx ->
     }
 }
 
-fun readAcceptCounts(acceptStorage: StorageTexture2d) {
+fun readAcceptCounts(acceptStorage: StorageTexture2d, expectedCount: Long) {
     acceptStorage.readbackTextureData {
         val buf = it.data as Int32Buffer
 
@@ -150,18 +161,14 @@ fun readAcceptCounts(acceptStorage: StorageTexture2d) {
                 sum += buf[y * it.width + x]
             }
         }
-        println("Accept count: $sum")
+        println("Accept count:   $sum")
+        println("Expected count: $expectedCount")
         exitProcess(0)
     }
 }
 
-fun loadWorkflows(): Pair<Workflows, StorageTexture2d> {
-    val input = File("inputs/day19.txt").readLines()
-    val (workflowDefs, _) = input.splitByBlankLines()
-
-    val workflowsByName = workflowDefs.map { Workflow(it) }.associateBy { it.name } + ("A" to Day19.ACCEPT) + ("R" to Day19.REJECT)
+fun loadWorkflows(workflowsByName: Map<String, Workflow>): Pair<Workflows, StorageTexture2d> {
     val workflows = Workflows(workflowsByName)
-
     val numWorkflows = workflows.workflows.size
     val numRules = workflows.rules.size
     val storage = StorageTexture2d(max(numRules, numWorkflows), 3, TexFormat.R_I32)
