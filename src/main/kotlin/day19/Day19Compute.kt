@@ -56,7 +56,7 @@ fun main() = KoolApplication { ctx ->
                                 }
 
                                 `if`(((op eq 0.const) and (partVal lt thresh)) or
-                                        ((op ne 1.const) and (partVal gt thresh))) {
+                                        ((op ne 0.const) and (partVal gt thresh))) {
                                     workflowIdx set (rule shr 20.const)
                                     `break`()
                                 }
