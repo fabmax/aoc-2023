@@ -1,8 +1,7 @@
 package day08
 
 import AocPuzzle
-import findPrimeFactors
-import findPrimes
+import leastCommonMultiple
 
 fun main() = Day08().start()
 
@@ -32,11 +31,7 @@ class Day08 : AocPuzzle() {
             .filter { it.name.endsWith("A") }.toMutableList()
             .map { start -> start.walk(instructions) { it.name.endsWith("Z") } }
 
-        val primes = findPrimes(distances.max())
-        return distances
-            .flatMap { findPrimeFactors(it, primes) }
-            .distinct()
-            .fold(1L) { prod, value -> prod * value }
+        return leastCommonMultiple(distances)
     }
 }
 

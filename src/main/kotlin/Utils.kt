@@ -25,6 +25,14 @@ fun findPrimes(upperLimit: Int): List<Int> = (2..upperLimit).filter { it.isPrime
 
 val Int.isPrime: Boolean get() = (2 .. (this / 2)).none { this % it == 0 }
 
+fun leastCommonMultiple(ints: Collection<Int>): Long {
+    val primes = findPrimes(ints.max())
+    return ints
+        .flatMap { findPrimeFactors(it, primes) }
+        .distinct()
+        .fold(1L) { prod, value -> prod * value }
+}
+
 fun printColored(text: String, fg: AnsiColor? = null, bg: AnsiColor? = null) {
     val fgCode = fg?.let { "${it.fg}" } ?: ""
     val bgCode = bg?.let { "${it.bg}" } ?: ""
