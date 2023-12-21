@@ -77,8 +77,6 @@ data class TravelState(
     }
 }
 
-infix fun Vec2i.dot(other: Vec2i) = x * other.x + y * other.y
-
 enum class TravelDir(val step: Vec2i) {
     UP(Vec2i(0, -1)),
     DN(Vec2i(0, 1)),
