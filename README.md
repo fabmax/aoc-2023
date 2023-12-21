@@ -27,7 +27,8 @@ So far, all [solutions](src/main/kotlin) work for both parts. There are a few no
 - **Day 14: Parabolic Reflector Dish**
 
   This was a fun one! For part 1 I have an [alternative solution](src/main/kotlin/day14/Day14Kool.kt), which solves
-  the puzzle using physics simulation including fancy 3D graphics. I used [kool](https://github.com/fabmax/kool) for 
+  the puzzle using physics simulation including fancy 3D graphics. Also runs in the
+  [browser](https://fabmax.github.io/kool/aoc23-day14/) I used [kool](https://github.com/fabmax/kool) for 
   that, my own kotlin 3D game engine :smile:
 
   For my [regular solution](src/main/kotlin/day14/Day14.kt) I went for speed instead of elegance: After a few
