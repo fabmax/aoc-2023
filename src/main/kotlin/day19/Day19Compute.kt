@@ -1,6 +1,7 @@
 package day19
 
 import de.fabmax.kool.KoolApplication
+import de.fabmax.kool.KoolConfigJvm
 import de.fabmax.kool.modules.ksl.KslComputeShader
 import de.fabmax.kool.modules.ksl.lang.*
 import de.fabmax.kool.pipeline.ComputeRenderPass
@@ -13,7 +14,9 @@ import java.io.File
 import kotlin.math.max
 import kotlin.system.exitProcess
 
-fun main() = KoolApplication { ctx ->
+fun main() = KoolApplication(
+    KoolConfigJvm(isVsync = false)
+) { ctx ->
     ctx.scenes += scene {
 
         val computeShader = KslComputeShader("Compute shader test") {
@@ -119,12 +122,12 @@ fun main() = KoolApplication { ctx ->
         // 45,084 Gops, estimated total time: 1h:34m
 
         computeTask.onBeforeDispatch {
-            fromS = subStep * 40 + 1
-            toS = (subStep + 1) * 40 + 1
+            fromS = subStep * 80 + 1
+            toS = (subStep + 1) * 80 + 1
         }
 
         computeTask.onAfterDispatch {
-            if (++subStep == 100) {
+            if (++subStep == 50) {
                 println("  progress: %.1f %% (%.3f %% total) ...".format(100.0 * x / xLimit, 100.0 * x / 4000))
                 if (x >= xLimit) {
                     val time = (System.nanoTime() - startT) / 1e9
