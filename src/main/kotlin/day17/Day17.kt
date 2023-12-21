@@ -4,10 +4,10 @@ import AocPuzzle
 import de.fabmax.kool.math.Vec2i
 import de.fabmax.kool.util.PriorityQueue
 
-fun main() = Day17().start()
+fun main() = Day17().runAll()
 
-class Day17 : AocPuzzle() {
-    override fun solve(input: List<String>): Pair<Any?, Any?> {
+class Day17 : AocPuzzle<Int, Int>() {
+    override fun solve(input: List<String>): Pair<Int, Int> {
         val start = Vec2i.ZERO
         val dest = Vec2i(input[0].lastIndex, input.lastIndex)
         val answer1 = dijkstra(start, dest, input, 0, 3)

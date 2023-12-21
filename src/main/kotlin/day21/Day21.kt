@@ -4,11 +4,11 @@ import AocPuzzle
 import de.fabmax.kool.math.Vec2i
 import printColored
 
-fun main() = Day21.start()
+fun main() = Day21.runAll()
 
-object Day21 : AocPuzzle() {
+object Day21 : AocPuzzle<Int, Long>() {
 
-    override fun solve(input: List<String>): Pair<Any?, Any?> {
+    override fun solve(input: List<String>): Pair<Int, Long> {
         val answer1 = GardenMap(input).possiblePositions(64).size
         val answer2 = part2(input)
 

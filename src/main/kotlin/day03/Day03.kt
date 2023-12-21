@@ -2,10 +2,10 @@ package day03
 
 import AocPuzzle
 
-fun main() = Day03().start()
+fun main() = Day03.runAll()
 
-class Day03 : AocPuzzle() {
-    override fun solve(input: List<String>): Pair<Any?, Any?> {
+object Day03 : AocPuzzle<Int, Int>() {
+    override fun solve(input: List<String>): Pair<Int, Int> {
         val symbols = mutableMapOf<Coordinate, Symbol>()
         val numbers = mutableMapOf<Coordinate, Symbol>()
 

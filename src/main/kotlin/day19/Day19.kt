@@ -6,13 +6,16 @@ import clipUpper
 import size
 import splitByBlankLines
 
-fun main() = Day19().start()
+fun main() = Day19.runAll()
 
 typealias Part = List<Int>
 
-class Day19 : AocPuzzle() {
+object Day19 : AocPuzzle<Int, Long>() {
+    val NUMBERS = Regex("""(\d+)""")
+    val ACCEPT = Workflow("A", emptyList(), "")
+    val REJECT = Workflow("R", emptyList(), "")
 
-    override fun solve(input: List<String>): Pair<Any?, Any?> {
+    override fun solve(input: List<String>): Pair<Int, Long> {
         val (workflowDefs, partsDefs) = input.splitByBlankLines()
 
         val workflows = workflowDefs.map { Workflow(it) }.associateBy { it.name } + ("A" to ACCEPT) + ("R" to REJECT)
@@ -73,11 +76,6 @@ class Day19 : AocPuzzle() {
         return rules.firstOrNull { it.test(part) }?.next ?: elseNext
     }
 
-    companion object {
-        val NUMBERS = Regex("""(\d+)""")
-        val ACCEPT = Workflow("A", emptyList(), "")
-        val REJECT = Workflow("R", emptyList(), "")
-    }
 }
 
 fun Workflow(line: String): Workflow {

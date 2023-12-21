@@ -4,10 +4,10 @@ import AocPuzzle
 import de.fabmax.kool.math.Vec2i
 import kotlin.math.max
 
-fun main() = Day16().start()
+fun main() = Day16.runAll()
 
-class Day16 : AocPuzzle() {
-    override fun solve(input: List<String>): Pair<Any?, Any?> {
+object Day16 : AocPuzzle<Int, Int>() {
+    override fun solve(input: List<String>): Pair<Int, Int> {
         val contraption = Contraption(input)
         contraption.recurseBeam(Vec2i.ZERO, BeamDir.RIGHT)
         val answer1 = contraption.energized.size

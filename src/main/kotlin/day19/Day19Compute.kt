@@ -141,7 +141,7 @@ fun main() = KoolApplication(
                     )
                     removeOffscreenPass(computePass)
 
-                    val expectedCount = Day19().part2(workflowsByName, 1..xLimit)
+                    val expectedCount = Day19.part2(workflowsByName, 1..xLimit)
                     readAcceptCounts(acceptCounts, expectedCount)
                 }
 

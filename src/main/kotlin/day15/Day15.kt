@@ -2,10 +2,10 @@ package day15
 
 import AocPuzzle
 
-fun main() = Day15().start()
+fun main() = Day15.runAll()
 
-class Day15 : AocPuzzle() {
-    override fun solve(input: List<String>): Pair<Any?, Any?> {
+object Day15 : AocPuzzle<Int, Int>() {
+    override fun solve(input: List<String>): Pair<Int, Int> {
         val answer1 = input.flatMap { it.split(",") }.sumOf { Hashmap.hash(it) }
 
         val lensMap = Hashmap()

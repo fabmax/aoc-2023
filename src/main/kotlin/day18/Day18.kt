@@ -4,10 +4,10 @@ import AocPuzzle
 import de.fabmax.kool.math.Vec2i
 import kotlin.math.abs
 
-fun main() = Day18().start()
+fun main() = Day18.runAll()
 
-class Day18 : AocPuzzle() {
-    override fun solve(input: List<String>): Pair<Any?, Any?> {
+object Day18 : AocPuzzle<Long, Long>() {
+    override fun solve(input: List<String>): Pair<Long, Long> {
         var pos = Vec2i(0, 0)
         val verts = input.map {
             val (a, b, _) = it.split(" ")

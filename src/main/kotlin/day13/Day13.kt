@@ -4,11 +4,11 @@ import AocPuzzle
 import splitByBlankLines
 import kotlin.math.min
 
-fun main() = Day13().start()
+fun main() = Day13.runAll()
 
-class Day13 : AocPuzzle() {
+object Day13 : AocPuzzle<Int, Int>() {
 
-    override fun solve(input: List<String>): Pair<Any?, Any?> {
+    override fun solve(input: List<String>): Pair<Int, Int> {
         val patterns = input.splitByBlankLines().map { Pattern(it) }
 
         val answer1 = patterns.sumOf {

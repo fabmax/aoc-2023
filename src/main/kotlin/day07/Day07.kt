@@ -2,10 +2,10 @@ package day07
 
 import AocPuzzle
 
-fun main() = Day07().start()
+fun main() = Day07.runAll()
 
-class Day07 : AocPuzzle() {
-    override fun solve(input: List<String>): Pair<Any?, Any?> {
+object Day07 : AocPuzzle<Int, Int>() {
+    override fun solve(input: List<String>): Pair<Int, Int> {
         val hands1 = input.map { Hand(it) }.ranked()
         val answer1 = hands1.mapIndexed { rank, hand -> hand.bid * (rank+1) }.sum()
 

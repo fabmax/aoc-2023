@@ -4,11 +4,11 @@ import AnsiColor
 import AocPuzzle
 import printColored
 
-fun main() = Day10().start()
+fun main() = Day10.runAll()
 
-class Day10 : AocPuzzle() {
+object Day10 : AocPuzzle<Int, Int>() {
 
-    override fun solve(input: List<String>): Pair<Any?, Any?> {
+    override fun solve(input: List<String>): Pair<Int, Int> {
         val maze = Maze(input)
 
         maze.printMaze()
@@ -93,21 +93,19 @@ class Day10 : AocPuzzle() {
         }
     }
 
-    companion object {
-        private val openUp = setOf('|', 'J', 'L', 'S')
-        private val openDn = setOf('|', '7', 'F', 'S')
-        private val openLt = setOf('-', 'J', '7', 'S')
-        private val openRt = setOf('-', 'L', 'F', 'S')
+    private val openUp = setOf('|', 'J', 'L', 'S')
+    private val openDn = setOf('|', '7', 'F', 'S')
+    private val openLt = setOf('-', 'J', '7', 'S')
+    private val openRt = setOf('-', 'L', 'F', 'S')
 
-        private val charMap = mapOf(
-            '|' to '┃',
-            '-' to '━',
-            'J' to '┛',
-            'L' to '┗',
-            'F' to '┏',
-            '7' to '┓'
-        )
-    }
+    private val charMap = mapOf(
+        '|' to '┃',
+        '-' to '━',
+        'J' to '┛',
+        'L' to '┗',
+        'F' to '┏',
+        '7' to '┓'
+    )
 }
 
 data class Pipe(val shape: Char, val x: Int, val y: Int)

@@ -2,11 +2,11 @@ package day12
 
 import AocPuzzle
 
-fun main() = Day12().start()
+fun main() = Day12.runAll()
 
-class Day12 : AocPuzzle() {
+object Day12 : AocPuzzle<Long, Long>() {
 
-    override fun solve(input: List<String>): Pair<Any?, Any?> {
+    override fun solve(input: List<String>): Pair<Long, Long> {
         val conditionsAndGroups = input.map { line ->
             val (conditions, groups) = line.split(" ")
             val counts = groups.split(",").map { it.toInt() }

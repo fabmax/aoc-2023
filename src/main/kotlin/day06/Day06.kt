@@ -2,10 +2,10 @@ package day06
 
 import AocPuzzle
 
-fun main() = Day06().start()
+fun main() = Day06.runAll()
 
-class Day06 : AocPuzzle() {
-    override fun solve(input: List<String>): Pair<Any?, Any?> {
+object Day06 : AocPuzzle<Int, Int>() {
+    override fun solve(input: List<String>): Pair<Int, Int> {
         return part1(input) to part2(input)
     }
 
@@ -37,11 +37,11 @@ class Day06 : AocPuzzle() {
             .count { it > distance }
     }
 
-    private fun getPossibleRuns(time: Int): List<Run> {
+    private fun getPossibleRuns(time: Int): List<BoatRun> {
         return (0 .. time).map { chargeTime ->
-            Run(time, chargeTime, (time - chargeTime) * chargeTime)
+            BoatRun(time, chargeTime, (time - chargeTime) * chargeTime)
         }
     }
 }
 
-data class Run(val totalTime: Int, val chargeTime: Int, val distance: Int)
+data class BoatRun(val totalTime: Int, val chargeTime: Int, val distance: Int)

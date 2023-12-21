@@ -1,20 +1,23 @@
-abstract class AocPuzzle {
+abstract class AocPuzzle<A: Any, B: Any> {
 
     private val day = Regex("""\d+""").find(this::class.simpleName!!)!!.value.toInt()
 
     val inputData = InputData(day)
 
-    abstract fun solve(input: List<String>): Pair<Any?, Any?>
+    var run = Run.TestRun(0)
+        private set
 
-    protected open fun test1(input: List<String>): Any? {
+    abstract fun solve(input: List<String>): Pair<A, B>
+
+    protected open fun test1(input: List<String>): A {
         return solve(input).first
     }
 
-    protected open fun test2(input: List<String>): Any? {
+    protected open fun test2(input: List<String>): B {
         return solve(input).second
     }
 
-    fun start() {
+    fun runAll() {
         runTests()
         println()
         runPuzzle()
@@ -69,5 +72,10 @@ abstract class AocPuzzle {
             answer is Long -> if (answer == expected) "✅ " else "❌ "
             else -> "❔ "
         }
+    }
+
+    sealed class Run {
+        data class TestRun(val testIdx: Int) : Run()
+        data object PuzzleRun : Run()
     }
 }

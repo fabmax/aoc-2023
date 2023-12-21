@@ -2,10 +2,10 @@ package day04
 
 import AocPuzzle
 
-fun main() = Day04().start()
+fun main() = Day04.runAll()
 
-class Day04 : AocPuzzle() {
-    override fun solve(input: List<String>): Pair<Any?, Any?> {
+object Day04 : AocPuzzle<Int, Int>() {
+    override fun solve(input: List<String>): Pair<Int, Int> {
         val answer1 = input
             .map { Card(it) }
             .sumOf { it.points }

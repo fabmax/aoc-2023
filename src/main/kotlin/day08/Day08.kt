@@ -3,19 +3,19 @@ package day08
 import AocPuzzle
 import leastCommonMultiple
 
-fun main() = Day08().start()
+fun main() = Day08.runAll()
 
-class Day08 : AocPuzzle() {
+object Day08 : AocPuzzle<Int, Long>() {
 
-    override fun solve(input: List<String>): Pair<Any, Any> {
+    override fun solve(input: List<String>): Pair<Int, Long> {
         val answer1 = part1(input)
         val answer2 = part2(input)
         return answer1 to answer2
     }
 
-    override fun test1(input: List<String>): Any = part1(input)
+    override fun test1(input: List<String>): Int = part1(input)
 
-    override fun test2(input: List<String>): Any = part2(input)
+    override fun test2(input: List<String>): Long = part2(input)
 
     private fun part1(input: List<String>): Int {
         val instructions = input.first().map { instr -> Instruction.entries.first { it.id == instr } }

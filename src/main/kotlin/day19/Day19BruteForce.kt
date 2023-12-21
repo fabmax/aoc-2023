@@ -4,10 +4,13 @@ import AocPuzzle
 import splitByBlankLines
 import kotlin.concurrent.thread
 
-fun main() = Day19BruteForce().runPuzzle()
+fun main() = Day19BruteForce.runPuzzle()
 
-class Day19BruteForce : AocPuzzle() {
-    override fun solve(input: List<String>): Pair<Any?, Any?> {
+object Day19BruteForce : AocPuzzle<Int, Long>() {
+
+    private var nextWorkflowId = 0
+
+    override fun solve(input: List<String>): Pair<Int, Long> {
         val (workflowDefs, partDefs) = input.splitByBlankLines()
 
         nextWorkflowId = 2
@@ -84,10 +87,6 @@ class Day19BruteForce : AocPuzzle() {
         )
 
         return accepted
-    }
-
-    companion object {
-        private var nextWorkflowId = 0
     }
 }
 

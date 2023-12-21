@@ -5,11 +5,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 
-fun main() = Day05().start()
+fun main() = Day05().runAll()
 
-class Day05 : AocPuzzle() {
+class Day05 : AocPuzzle<Long, Long>() {
 
-    override fun solve(input: List<String>): Pair<Any, Any> {
+    override fun solve(input: List<String>): Pair<Long, Long> {
         val almanac = parseAlmanac(input)
 
         val answer1 = almanac.seeds.minOf { almanac.seedToLocation(it) }

@@ -4,11 +4,11 @@ import AocPuzzle
 import kotlin.math.max
 import kotlin.math.min
 
-fun main() = Day11().start()
+fun main() = Day11.runAll()
 
-class Day11 : AocPuzzle() {
+object Day11 : AocPuzzle<Long, Long>() {
 
-    override fun solve(input: List<String>): Pair<Any?, Any?> {
+    override fun solve(input: List<String>): Pair<Long, Long> {
         val image = Image(input)
 
         val answer1 = determineExpandedDistances(image, image.getGalaxies(), 2)
@@ -52,6 +52,7 @@ class Image(source: List<String>) {
         }
     }
 
+    @Suppress("unused")
     fun print() {
         pixels.forEach { row ->
             row.forEach { print(it) }

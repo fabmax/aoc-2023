@@ -3,10 +3,10 @@ package day20
 import AocPuzzle
 import leastCommonMultiple
 
-fun main() = Day20().start()
+fun main() = Day20.runAll()
 
-class Day20 : AocPuzzle() {
-    override fun solve(input: List<String>): Pair<Any?, Any?> {
+object Day20 : AocPuzzle<Long, Long>() {
+    override fun solve(input: List<String>): Pair<Long, Long> {
         return part1(input) to part2(input)
     }
 

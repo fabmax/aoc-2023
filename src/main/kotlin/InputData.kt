@@ -2,7 +2,10 @@ import java.io.File
 
 class InputData(val day: Int) {
 
-    val puzzleInput = File("inputs/day%02d.txt".format(day)).readLines().dropLastWhile { it.isBlank() }
+    val puzzleInputRaw = File("inputs/day%02d.txt".format(day)).readText()
+    val puzzleInput: List<String>
+        get() = puzzleInputRaw.lines().dropLastWhile { it.isBlank() }
+
     val testInputs = mutableListOf<TestInput>()
 
     val answerPart1: Long?
@@ -22,6 +25,7 @@ class InputData(val day: Int) {
     }
 
     class TestInput(file: File) {
+        val testInputRaw: String
         val testInput: List<String>
 
         var test1: Long? = null
@@ -32,6 +36,7 @@ class InputData(val day: Int) {
         init {
             val allLines = file.readLines()
             testInput = allLines.drop(1).dropWhile { it.isBlank() }.dropLastWhile { it.isBlank() }
+            testInputRaw = testInput.joinToString(System.lineSeparator())
 
             allLines[0]
                 .split(";")

@@ -2,11 +2,11 @@ package day09
 
 import AocPuzzle
 
-fun main() = Day09().start()
+fun main() = Day09.runAll()
 
-class Day09 : AocPuzzle() {
+object Day09 : AocPuzzle<Int, Int>() {
 
-    override fun solve(input: List<String>): Pair<Any, Any> {
+    override fun solve(input: List<String>): Pair<Int, Int> {
         val sequences = input
             .map { line -> Regex("""-?\d+""").findAll(line).map { it.value.toInt() }.toList() }
             .map { it.extendSequence() }

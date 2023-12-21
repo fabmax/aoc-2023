@@ -2,10 +2,10 @@ package day02
 
 import AocPuzzle
 
-fun main() = Day02().start()
+fun main() = Day02.runAll()
 
-class Day02 : AocPuzzle() {
-    override fun solve(input: List<String>): Pair<Any?, Any?> {
+object Day02 : AocPuzzle<Int, Int>() {
+    override fun solve(input: List<String>): Pair<Int, Int> {
         val games = input.map { Game.parse(it) }
         return part1(games) to part2(games)
     }

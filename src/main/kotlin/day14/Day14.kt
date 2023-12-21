@@ -3,10 +3,10 @@ package day14
 import AocPuzzle
 import timed
 
-fun main() = Day14().start()
+fun main() = Day14.runAll()
 
-class Day14 : AocPuzzle() {
-    override fun solve(input: List<String>): Pair<Any?, Any?> {
+object Day14 : AocPuzzle<Int, Int>() {
+    override fun solve(input: List<String>): Pair<Int, Int> {
         val grid1 = RockGrid(input)
         grid1.tiltNorth()
         val answer1 = grid1.computeWeightAndHash().first
