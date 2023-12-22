@@ -37,7 +37,9 @@ abstract class AocPuzzle<A: Any, B: Any> {
         }
     }
 
-    open fun prepareRun(run: Run) { }
+    open fun prepareRun(run: Run) {
+        this.run = run
+    }
     
     open fun solve1(input: List<String>): A {
         throw PartNotImplementedException(1)
@@ -53,8 +55,27 @@ abstract class AocPuzzle<A: Any, B: Any> {
         runPuzzle()
     }
 
+    fun runPuzzle() {
+        println("Day $day Puzzle:")
+
+        prepareRun(Run.PuzzleRun)
+        runParts(part1 = true, part2 = true)
+    }
+
+    fun runTests() {
+        println("Day $day Tests:")
+
+        inputData.testInputs.forEachIndexed { i, test ->
+            println("  [Test ${i+1}]:")
+            prepareRun(Run.TestRun(i))
+
+            val isTestPart1 = test.test1 != null
+            val isTestPart2 = test.test2 != null
+            runParts(isTestPart1, isTestPart2)
+        }
+    }
+
     private fun runParts(part1: Boolean, part2: Boolean) {
-        prepareRun(run)
         if (part1) {
             runPart(1, expected1)
         }
@@ -76,27 +97,6 @@ abstract class AocPuzzle<A: Any, B: Any> {
             println("  %-36s%9.3f ms".format(answerStr, t1))
         } catch (e: PartNotImplementedException) {
             println("  Part ${e.part} not yet implemented")
-        }
-
-    }
-
-    fun runPuzzle() {
-        println("Day $day Puzzle:")
-
-        run = Run.PuzzleRun
-        runParts(part1 = true, part2 = true)
-    }
-
-    fun runTests() {
-        println("Day $day Tests:")
-
-        inputData.testInputs.forEachIndexed { i, test ->
-            println("  [Test ${i+1}]:")
-            run = Run.TestRun(i)
-
-            val isTestPart1 = test.test1 != null
-            val isTestPart2 = test.test2 != null
-            runParts(isTestPart1, isTestPart2)
         }
     }
 

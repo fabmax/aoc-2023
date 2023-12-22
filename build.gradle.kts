@@ -1,5 +1,7 @@
 plugins {
     kotlin("jvm") version "1.9.21"
+    id("org.jetbrains.kotlinx.benchmark") version "0.4.10"
+    id("org.jetbrains.kotlin.plugin.allopen") version "1.9.21"
 }
 
 repositories {
@@ -9,6 +11,7 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:0.4.10")
 
     implementation("de.fabmax.kool:kool-core:0.14.0-SNAPSHOT")
     implementation("de.fabmax.kool:kool-physics:0.14.0-SNAPSHOT")
@@ -30,4 +33,24 @@ dependencies {
 
 kotlin {
     jvmToolchain(17)
+}
+
+allOpen {
+    annotation("org.openjdk.jmh.annotations.State")
+}
+
+benchmark {
+    configurations {
+        named("main") {
+            warmups = 3
+            iterations = 5
+            iterationTime = 500
+            iterationTimeUnit = "millis"
+        }
+    }
+    targets {
+        register("main") {
+
+        }
+    }
 }
