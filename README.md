@@ -42,7 +42,7 @@ So far, all [solutions](src/main/kotlin) work for both parts. There are a few no
   Ryzen 7950X) as well as on [GPU](src/main/kotlin/day19/Day19Compute.kt) (estimated time to complete: 1h:34m at 45.1G part checks / second, RTX4080, Windows).
 
 - **[Day 21:](src/main/kotlin/day19/Day19.kt) Step Counter**
-  Wow, that was a tough one. In the ens my solution is straight forward, but getting there was rough...
+  Wow, that was a tough one. In the end my solution is pretty straight forward, but getting there was rough...
 
 ## Running the Puzzles
 
