@@ -36,13 +36,22 @@ So far, all [solutions](src/main/kotlin) work for both parts. There are a few no
 
 
 - **[Day 19:](src/main/kotlin/day19/Day19.kt) Aplenty**
+ 
   Another straight-forward part 1 followed by a pretty difficult part 2. After struggling a bit with range bounds
   it worked out ok. Just for fun, I also implemented two rather useless brute force approaches: On
   [CPU](src/main/kotlin/day19/Day19BruteForce.kt) (estimated time to complete: 2.6 days at 1.13G part checks / second,
   Ryzen 7950X) as well as on [GPU](src/main/kotlin/day19/Day19Compute.kt) (estimated time to complete: 1h:34m at 45.1G part checks / second, RTX4080, Windows).
 
-- **[Day 21:](src/main/kotlin/day19/Day19.kt) Step Counter**
+
+- **[Day 21:](src/main/kotlin/day21/Day21.kt) Step Counter**
+ 
   Wow, that was a tough one. In the end my solution is pretty straight forward, but getting there was rough...
+
+
+- **[Day 22:](src/main/kotlin/day22/Day22.kt) Sand Slabs**
+
+  Not too special, but there's another nice visualization for zhe brick stack.
+ 
 
 ## Running the Puzzles
 

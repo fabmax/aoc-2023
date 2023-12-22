@@ -44,13 +44,11 @@ benchmark {
         named("main") {
             warmups = 3
             iterations = 5
-            iterationTime = 500
+            iterationTime = 1000
             iterationTimeUnit = "millis"
         }
     }
     targets {
-        register("main") {
-
-        }
+        register("main") { }
     }
 }

@@ -21,9 +21,9 @@ fun main() = Day22.runAll()
 object Day22 : AocPuzzle<Int, Int>() {
     override fun solve1(input: List<String>): Int {
         val brickMap = settleBricks(input)
-//        if (!isTestRun()) {
-//            drawBricks(brickMap)
-//        }
+        if (!isTestRun()) {
+            drawBricks(brickMap)
+        }
         val bricks = brickMap.values.distinct()
         return bricks.count { brick -> brick.isSafeToRemove(brickMap) }
     }
@@ -145,7 +145,7 @@ object Day22 : AocPuzzle<Int, Int>() {
                     }
 
                     onUpdate {
-                        transform.rotate(90f.deg * Time.deltaT, Vec3f.Y_AXIS)
+                        transform.rotate(15f.deg * Time.deltaT, Vec3f.Y_AXIS)
                     }
                 }
             }

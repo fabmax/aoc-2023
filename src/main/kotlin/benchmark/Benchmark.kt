@@ -3,7 +3,7 @@
 package benchmark
 
 import AocPuzzle
-import day22.Day22
+import day14.Day14
 import kotlinx.benchmark.*
 
 @State(Scope.Benchmark)
@@ -11,7 +11,7 @@ import kotlinx.benchmark.*
 @OutputTimeUnit(BenchmarkTimeUnit.MILLISECONDS)
 class AocBenchmark {
 
-    val target = Day22
+    val target = Day14
 
     @Benchmark
     fun test1() {
