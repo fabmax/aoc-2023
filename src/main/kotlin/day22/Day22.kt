@@ -43,9 +43,7 @@ object Day22 : AocPuzzle<Int, Int>() {
 
     private fun settleBricks(input: List<String>): Map<Vec3i, Brick> {
         val bricks = input.mapIndexed { i, it ->
-            val (start, end) = it.split("~")
-            val brick = Brick(i, Vec3i(start), Vec3i(end))
-            brick
+            it.split("~").let { (start, end) -> Brick(i, Vec3i(start), Vec3i(end)) }
         }
 
         val brickMap = mutableMapOf<Vec3i, Brick>()
