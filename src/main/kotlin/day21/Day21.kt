@@ -8,22 +8,21 @@ fun main() = Day21.runAll()
 
 object Day21 : AocPuzzle<Int, Long>() {
 
-    override fun solve(input: List<String>): Pair<Int, Long> {
-        val answer1 = GardenMap(input).possiblePositions(64).size
-        val answer2 = part2(input)
-
-        return answer1 to answer2
+    override fun solve1(input: List<String>): Int {
+        val n = if (isTestRun()) 6 else 64
+        return GardenMap(input).possiblePositions(n).size
     }
 
-    fun part2(input: List<String>): Long {
-        val n = 26501365L
-        val s = 131
-
-        val map = GardenMap(input)
-        if (map.width != s) {
+    override fun solve2(input: List<String>): Long {
+        if (isTestRun()) {
             // skip test inputs
             return 0L
         }
+
+        val n = 26501365L
+        val s = 131
+        val map = GardenMap(input)
+        check(s == map.width && s == map.height)
 
         //
         // repeated map pattern:
@@ -67,16 +66,14 @@ object Day21 : AocPuzzle<Int, Long>() {
         val borderFieldsA = extent
         val borderFieldsB = extent-1
 
-        val sum = evenFields * evenCount +
+        return evenFields * evenCount +
                 oddFields * oddCount +
                 borderStarts.sumOf { borderCountsA[it]!! * borderFieldsA + borderCountsB[it]!! * borderFieldsB } +
                 cornerStarts.sumOf { cornerCounts[it]!! }
-
-        return sum
     }
 
     @Suppress("unused")
-    fun checkExplicit(input: List<String>, e: Int, n: Int): Long {
+    fun countExplicit(input: List<String>, e: Int, n: Int): Long {
         val extLines = input.map { (1 until e).fold(it) { acc, _ -> acc + it } }
         val extended = (1 until e).fold(extLines) { acc, _ -> acc + extLines }
 

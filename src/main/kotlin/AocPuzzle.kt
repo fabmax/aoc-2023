@@ -2,37 +2,89 @@ abstract class AocPuzzle<A: Any, B: Any> {
 
     private val day = Regex("""\d+""").find(this::class.simpleName!!)!!.value.toInt()
 
-    val inputData = InputData(day)
-
-    var run = Run.TestRun(0)
+    var run: Run = Run.TestRun(0)
         private set
 
-    abstract fun solve(input: List<String>): Pair<A, B>
+    val inputData = InputData(day)
 
-    protected open fun test1(input: List<String>): A {
-        return solve(input).first
+    val input: List<String>
+        get() = when(val r = run) {
+            is Run.TestRun -> inputData.testInputs[r.testIdx].testInput
+            is Run.PuzzleRun -> inputData.puzzleInput
+        }
+    val rawInput: String
+        get() = when(val r = run) {
+            is Run.TestRun -> inputData.testInputs[r.testIdx].testInputRaw
+            is Run.PuzzleRun -> inputData.puzzleInputRaw
+        }
+
+    val expected1: Long?
+        get() = when(val r = run) {
+            is Run.TestRun -> inputData.testInputs[r.testIdx].test1
+            is Run.PuzzleRun -> inputData.answerPart1
+        }
+
+    val expected2: Long?
+        get() = when(val r = run) {
+            is Run.TestRun -> inputData.testInputs[r.testIdx].test2
+            is Run.PuzzleRun -> inputData.answerPart2
+        }
+
+    fun isTestRun(idx: Int = -1): Boolean {
+        return when (val r = run) {
+            is Run.TestRun -> idx < 0 || idx == r.testIdx
+            is Run.PuzzleRun -> false
+        }
     }
 
-    protected open fun test2(input: List<String>): B {
-        return solve(input).second
+    open fun prepareRun(run: Run) { }
+    
+    open fun solve1(input: List<String>): A {
+        throw PartNotImplementedException(1)
     }
 
+    open fun solve2(input: List<String>): B {
+        throw PartNotImplementedException(2)
+    }
+    
     fun runAll() {
         runTests()
         println()
         runPuzzle()
     }
 
+    private fun runParts(part1: Boolean, part2: Boolean) {
+        prepareRun(run)
+        if (part1) {
+            runPart(1, expected1)
+        }
+        if (part2) {
+            runPart(2, expected2)
+        }
+    }
+
+    private fun runPart(part: Int, expected: Long?) {
+        try {
+            val t = System.nanoTime()
+            val answer: Any = if (part == 1) {
+                solve1(input)
+            } else {
+                solve2(input)
+            }
+            val t1 = (System.nanoTime() - t) / 1e6
+            val answerStr = "${prefix(answer, expected)}Answer part $part: $answer"
+            println("  %-36s%9.3f ms".format(answerStr, t1))
+        } catch (e: PartNotImplementedException) {
+            println("  Part ${e.part} not yet implemented")
+        }
+
+    }
+
     fun runPuzzle() {
         println("Day $day Puzzle:")
 
-        val t = System.nanoTime()
-        val (answer1, answer2) = solve(inputData.puzzleInput)
-        val ms = (System.nanoTime() - t) / 1e6
-
-        println("  ${prefix(answer1, inputData.answerPart1)}Answer part 1: $answer1")
-        println("  ${prefix(answer2, inputData.answerPart2)}Answer part 2: $answer2")
-        println("  Took %.3f ms".format(ms))
+        run = Run.PuzzleRun
+        runParts(part1 = true, part2 = true)
     }
 
     fun runTests() {
@@ -40,28 +92,11 @@ abstract class AocPuzzle<A: Any, B: Any> {
 
         inputData.testInputs.forEachIndexed { i, test ->
             println("  [Test ${i+1}]:")
+            run = Run.TestRun(i)
 
             val isTestPart1 = test.test1 != null
             val isTestPart2 = test.test2 != null
-
-            val t = System.nanoTime()
-            when {
-                isTestPart1 && isTestPart2 -> {
-                    val (answer1, answer2) = solve(test.testInput)
-                    println("    ${prefix(answer1, test.test1)}Answer part 1: $answer1")
-                    println("    ${prefix(answer2, test.test2)}Answer part 2: $answer2")
-                }
-                isTestPart1 -> {
-                    val answer1 = test1(test.testInput)
-                    println("    ${prefix(answer1, test.test1)}Answer part 1: $answer1")
-                }
-                isTestPart2 -> {
-                    val answer2 = test2(test.testInput)
-                    println("    ${prefix(answer2, test.test2)}Answer part 2: $answer2")
-                }
-            }
-            val ms = (System.nanoTime() - t) / 1e6
-            println("    Took %.3f ms".format(ms))
+            runParts(isTestPart1, isTestPart2)
         }
     }
 
@@ -78,4 +113,6 @@ abstract class AocPuzzle<A: Any, B: Any> {
         data class TestRun(val testIdx: Int) : Run()
         data object PuzzleRun : Run()
     }
+    
+    class PartNotImplementedException(val part: Int) :  IllegalStateException()
 }

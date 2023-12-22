@@ -7,11 +7,14 @@ import kotlin.math.max
 fun main() = Day16.runAll()
 
 object Day16 : AocPuzzle<Int, Int>() {
-    override fun solve(input: List<String>): Pair<Int, Int> {
+    override fun solve1(input: List<String>): Int {
         val contraption = Contraption(input)
         contraption.recurseBeam(Vec2i.ZERO, BeamDir.RIGHT)
-        val answer1 = contraption.energized.size
+        return contraption.energized.size
+    }
 
+    override fun solve2(input: List<String>): Int {
+        val contraption = Contraption(input)
         val energys = input.indices.map { y ->
             contraption.energized.clear()
             contraption.recurseBeam(Vec2i(0, y), BeamDir.RIGHT)
@@ -34,9 +37,7 @@ object Day16 : AocPuzzle<Int, Int>() {
 
             max(fromTop, fromBottom)
         }
-        val answer2 = energys.max()
-
-        return answer1 to answer2
+        return energys.max()
     }
 }
 

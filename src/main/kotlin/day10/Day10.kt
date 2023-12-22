@@ -7,17 +7,20 @@ import printColored
 fun main() = Day10.runAll()
 
 object Day10 : AocPuzzle<Int, Int>() {
-
-    override fun solve(input: List<String>): Pair<Int, Int> {
+    override fun solve1(input: List<String>): Int {
         val maze = Maze(input)
-
         maze.printMaze()
 
         val loop = maze.traverseMaze()
-        val answer1 = loop.size / 2
-        val answer2 = (maze.maze.flatten() - loop).count { it.isInside(loop.toList()) }
+        return loop.size / 2
+    }
 
-        return answer1 to answer2
+    override fun solve2(input: List<String>): Int {
+        val maze = Maze(input)
+        maze.printMaze()
+
+        val loop = maze.traverseMaze()
+        return (maze.maze.flatten() - loop).count { it.isInside(loop.toList()) }
     }
 
     private fun Maze.traverseMaze(): Set<Pipe> {

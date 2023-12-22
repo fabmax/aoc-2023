@@ -7,13 +7,16 @@ import de.fabmax.kool.util.PriorityQueue
 fun main() = Day17().runAll()
 
 class Day17 : AocPuzzle<Int, Int>() {
-    override fun solve(input: List<String>): Pair<Int, Int> {
+    override fun solve1(input: List<String>): Int {
         val start = Vec2i.ZERO
         val dest = Vec2i(input[0].lastIndex, input.lastIndex)
-        val answer1 = dijkstra(start, dest, input, 0, 3)
-        val answer2 = dijkstra(start, dest, input, 4, 10)
+        return dijkstra(start, dest, input, 0, 3)
+    }
 
-        return answer1 to answer2
+    override fun solve2(input: List<String>): Int {
+        val start = Vec2i.ZERO
+        val dest = Vec2i(input[0].lastIndex, input.lastIndex)
+        return dijkstra(start, dest, input, 4, 10)
     }
 }
 

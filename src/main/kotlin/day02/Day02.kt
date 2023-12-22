@@ -5,12 +5,9 @@ import AocPuzzle
 fun main() = Day02.runAll()
 
 object Day02 : AocPuzzle<Int, Int>() {
-    override fun solve(input: List<String>): Pair<Int, Int> {
+    override fun solve1(input: List<String>): Int {
         val games = input.map { Game.parse(it) }
-        return part1(games) to part2(games)
-    }
 
-    fun part1(games: List<Game>): Int {
         val filterRed = 12
         val filterGreen = 13
         val filterBlue = 14
@@ -19,8 +16,8 @@ object Day02 : AocPuzzle<Int, Int>() {
         return filteredGames.sumOf { it.id }
     }
 
-    fun part2(games: List<Game>): Int {
-        return games.sumOf { it.getMinimumSet().power }
+    override fun solve2(input: List<String>): Int {
+        return input.map { Game.parse(it) }.sumOf { it.getMinimumSet().power }
     }
 }
 

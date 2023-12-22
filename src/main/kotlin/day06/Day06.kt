@@ -5,11 +5,7 @@ import AocPuzzle
 fun main() = Day06.runAll()
 
 object Day06 : AocPuzzle<Int, Int>() {
-    override fun solve(input: List<String>): Pair<Int, Int> {
-        return part1(input) to part2(input)
-    }
-
-    private fun part1(input: List<String>): Int {
+    override fun solve1(input: List<String>): Int {
         val times = input[0].substringAfter(':')
             .split(" ")
             .filter { it.isNotBlank() }
@@ -24,7 +20,7 @@ object Day06 : AocPuzzle<Int, Int>() {
             .fold(1) { value, betterOptions -> value * betterOptions.size }
     }
 
-    private fun part2(input: List<String>): Int {
+    override fun solve2(input: List<String>): Int {
         val time = input[0].substringAfter(':')
             .filter { !it.isWhitespace() }
             .trim().toLong()

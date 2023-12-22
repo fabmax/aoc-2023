@@ -7,23 +7,13 @@ fun main() = Day08.runAll()
 
 object Day08 : AocPuzzle<Int, Long>() {
 
-    override fun solve(input: List<String>): Pair<Int, Long> {
-        val answer1 = part1(input)
-        val answer2 = part2(input)
-        return answer1 to answer2
-    }
-
-    override fun test1(input: List<String>): Int = part1(input)
-
-    override fun test2(input: List<String>): Long = part2(input)
-
-    private fun part1(input: List<String>): Int {
+    override fun solve1(input: List<String>): Int {
         val instructions = input.first().map { instr -> Instruction.entries.first { it.id == instr } }
         val network = parseNetwork(input.drop(2))
         return network["AAA"]!!.walk(instructions) { it.name == "ZZZ" }
     }
 
-    private fun part2(input: List<String>): Long {
+    override fun solve2(input: List<String>): Long {
         val instructions = input.first().map { instr -> Instruction.entries.first { it.id == instr } }
         val network = parseNetwork(input.drop(2))
 

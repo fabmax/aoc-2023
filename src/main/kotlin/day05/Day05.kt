@@ -8,25 +8,24 @@ import kotlinx.coroutines.runBlocking
 fun main() = Day05().runAll()
 
 class Day05 : AocPuzzle<Long, Long>() {
-
-    override fun solve(input: List<String>): Pair<Long, Long> {
+    override fun solve1(input: List<String>): Long {
         val almanac = parseAlmanac(input)
+        return almanac.seeds.minOf { almanac.seedToLocation(it) }
+    }
 
-        val answer1 = almanac.seeds.minOf { almanac.seedToLocation(it) }
-
-        val answer2 = runBlocking(Dispatchers.Default) {
+    override fun solve2(input: List<String>): Long {
+        val almanac = parseAlmanac(input)
+        return runBlocking(Dispatchers.Default) {
             almanac.seeds
                 .chunked(2)
                 .map { (start, len) ->
                     async {
-                        (start ..< (start+len)).minOf { almanac.seedToLocation(it) }
+                        (start..<(start + len)).minOf { almanac.seedToLocation(it) }
                             .also { println("  Min of seeds $start [len: $len]: $it") }
                     }
                 }
                 .minOf { it.await() }
         }
-
-        return answer1 to answer2
     }
 
     private fun parseAlmanac(input: List<String>): Almanac {

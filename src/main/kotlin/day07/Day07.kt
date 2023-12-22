@@ -5,14 +5,14 @@ import AocPuzzle
 fun main() = Day07.runAll()
 
 object Day07 : AocPuzzle<Int, Int>() {
-    override fun solve(input: List<String>): Pair<Int, Int> {
+    override fun solve1(input: List<String>): Int {
         val hands1 = input.map { Hand(it) }.ranked()
-        val answer1 = hands1.mapIndexed { rank, hand -> hand.bid * (rank+1) }.sum()
+        return hands1.mapIndexed { rank, hand -> hand.bid * (rank+1) }.sum()
+    }
 
+    override fun solve2(input: List<String>): Int {
         val hands2 = input.map { Hand(it) }.ranked(isJokerRule = true)
-        val answer2 = hands2.mapIndexed { rank, hand -> hand.bid * (rank+1) }.sum()
-
-        return answer1 to answer2
+        return hands2.mapIndexed { rank, hand -> hand.bid * (rank+1) }.sum()
     }
 }
 

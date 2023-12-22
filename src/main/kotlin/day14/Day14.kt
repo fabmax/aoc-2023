@@ -1,27 +1,18 @@
 package day14
 
 import AocPuzzle
-import timed
 
 fun main() = Day14.runAll()
 
 object Day14 : AocPuzzle<Int, Int>() {
-    override fun solve(input: List<String>): Pair<Int, Int> {
+
+    override fun solve1(input: List<String>): Int {
         val grid1 = RockGrid(input)
         grid1.tiltNorth()
-        val answer1 = grid1.computeWeightAndHash().first
-        val answer2 = part2(input)
-
-        for (i in 0..10) {
-            timed {
-                part2(input)
-            }
-        }
-
-        return answer1 to answer2
+        return grid1.computeWeightAndHash().first
     }
 
-    fun part2(input: List<String>): Int {
+    override fun solve2(input: List<String>): Int {
         val grid = RockGrid(input)
         val arrangements = mutableMapOf<Long, Int>()
         val weights = mutableListOf<Int>()

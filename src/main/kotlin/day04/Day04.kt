@@ -5,11 +5,13 @@ import AocPuzzle
 fun main() = Day04.runAll()
 
 object Day04 : AocPuzzle<Int, Int>() {
-    override fun solve(input: List<String>): Pair<Int, Int> {
-        val answer1 = input
+    override fun solve1(input: List<String>): Int {
+        return input
             .map { Card(it) }
             .sumOf { it.points }
+    }
 
+    override fun solve2(input: List<String>): Int {
         val cards = input.map { Card(it) }
         for (i in cards.indices) {
             val card = cards[i]
@@ -17,9 +19,7 @@ object Day04 : AocPuzzle<Int, Int>() {
                 cards[j].copies += card.copies
             }
         }
-        val answer2 = cards.sumOf { it.copies }
-
-        return answer1 to answer2
+        return cards.sumOf { it.copies }
     }
 }
 

@@ -6,11 +6,8 @@ import leastCommonMultiple
 fun main() = Day20.runAll()
 
 object Day20 : AocPuzzle<Long, Long>() {
-    override fun solve(input: List<String>): Pair<Long, Long> {
-        return part1(input) to part2(input)
-    }
 
-    fun part1(input: List<String>): Long {
+    override fun solve1(input: List<String>): Long {
         val (broadcaster, _) = parseModules(input)
         Module.resetPulseCounts()
         for (i in 0 ..< 1000) {
@@ -19,7 +16,7 @@ object Day20 : AocPuzzle<Long, Long>() {
         return Module.lowPulseCount * Module.highPulseCount
     }
 
-    fun part2(input: List<String>): Long {
+    override fun solve2(input: List<String>): Long {
         val (broadcaster, modules) = parseModules(input)
         val output = (modules["rx"] ?: modules["output"]) as? Output ?: return 0
 

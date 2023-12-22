@@ -5,7 +5,17 @@ import AocPuzzle
 fun main() = Day03.runAll()
 
 object Day03 : AocPuzzle<Int, Int>() {
-    override fun solve(input: List<String>): Pair<Int, Int> {
+    override fun solve1(input: List<String>): Int {
+        val (numbers, symbols) = parseInput(input)
+        return part1(numbers, symbols)
+    }
+
+    override fun solve2(input: List<String>): Int {
+        val (numbers, symbols) = parseInput(input)
+        return part2(numbers, symbols)
+    }
+
+    private fun parseInput(input: List<String>): Pair<Map<Coordinate, Symbol>, Map<Coordinate, Symbol>> {
         val symbols = mutableMapOf<Coordinate, Symbol>()
         val numbers = mutableMapOf<Coordinate, Symbol>()
 
@@ -16,8 +26,7 @@ object Day03 : AocPuzzle<Int, Int>() {
                 symbol.coords.forEach { dest[it] = symbol }
             }
         }
-
-        return part1(numbers, symbols) to part2(numbers, symbols)
+        return numbers to symbols
     }
 
     private fun part1(numbers: Map<Coordinate, Symbol>, symbols: Map<Coordinate, Symbol>): Int {

@@ -8,16 +8,16 @@ fun main() = Day13.runAll()
 
 object Day13 : AocPuzzle<Int, Int>() {
 
-    override fun solve(input: List<String>): Pair<Int, Int> {
-        val patterns = input.splitByBlankLines().map { Pattern(it) }
-
-        val answer1 = patterns.sumOf {
+    override fun solve1(input: List<String>): Int {
+        return input.splitByBlankLines().map { Pattern(it) }.sumOf {
             100 * it.findReflectionCenterRow(0) + it.findReflectionCenterCol(0)
         }
-        val answer2 = patterns.sumOf {
+    }
+
+    override fun solve2(input: List<String>): Int {
+        return input.splitByBlankLines().map { Pattern(it) }.sumOf {
             100 * it.findReflectionCenterRow(1) + it.findReflectionCenterCol(1)
         }
-        return answer1 to answer2
     }
 
     class Pattern(val lines: List<String>) {

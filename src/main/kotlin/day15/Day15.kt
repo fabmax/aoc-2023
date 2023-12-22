@@ -5,9 +5,11 @@ import AocPuzzle
 fun main() = Day15.runAll()
 
 object Day15 : AocPuzzle<Int, Int>() {
-    override fun solve(input: List<String>): Pair<Int, Int> {
-        val answer1 = input.flatMap { it.split(",") }.sumOf { Hashmap.hash(it) }
+    override fun solve1(input: List<String>): Int {
+        return input.flatMap { it.split(",") }.sumOf { Hashmap.hash(it) }
+    }
 
+    override fun solve2(input: List<String>): Int {
         val lensMap = Hashmap()
         input
             .flatMap { it.split(",") }
@@ -22,12 +24,10 @@ object Day15 : AocPuzzle<Int, Int>() {
                 }
             }
 
-        val answer2 = lensMap.boxes
+        return lensMap.boxes
             .mapIndexed { boxI, entries ->
                 entries.mapIndexed { entryI, entry -> (boxI+1) * (entryI+1) * entry.value }.sum()
             }.sum()
-
-        return answer1 to answer2
     }
 }
 

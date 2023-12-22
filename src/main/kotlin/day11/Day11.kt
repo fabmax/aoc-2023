@@ -8,13 +8,14 @@ fun main() = Day11.runAll()
 
 object Day11 : AocPuzzle<Long, Long>() {
 
-    override fun solve(input: List<String>): Pair<Long, Long> {
+    override fun solve1(input: List<String>): Long {
         val image = Image(input)
+        return determineExpandedDistances(image, image.getGalaxies(), 2)
+    }
 
-        val answer1 = determineExpandedDistances(image, image.getGalaxies(), 2)
-        val answer2 = determineExpandedDistances(image, image.getGalaxies(), 1_000_000)
-
-        return answer1 to answer2
+    override fun solve2(input: List<String>): Long {
+        val image = Image(input)
+        return determineExpandedDistances(image, image.getGalaxies(), 1_000_000)
     }
 
     private fun determineExpandedDistances(image: Image, galaxies: List<Galaxy>, expansion: Int): Long {

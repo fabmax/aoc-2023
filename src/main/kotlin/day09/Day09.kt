@@ -5,16 +5,18 @@ import AocPuzzle
 fun main() = Day09.runAll()
 
 object Day09 : AocPuzzle<Int, Int>() {
-
-    override fun solve(input: List<String>): Pair<Int, Int> {
-        val sequences = input
+    override fun solve1(input: List<String>): Int {
+        return input
             .map { line -> Regex("""-?\d+""").findAll(line).map { it.value.toInt() }.toList() }
             .map { it.extendSequence() }
+            .sumOf { it.last() }
+    }
 
-        val answer1 = sequences.sumOf { it.last() }
-        val answer2 = sequences.sumOf { it.first() }
-
-        return answer1 to answer2
+    override fun solve2(input: List<String>): Int {
+        return input
+            .map { line -> Regex("""-?\d+""").findAll(line).map { it.value.toInt() }.toList() }
+            .map { it.extendSequence() }
+            .sumOf { it.first() }
     }
 
     private fun List<Int>.extendSequence(): List<Int> {

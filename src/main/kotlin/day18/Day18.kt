@@ -7,7 +7,7 @@ import kotlin.math.abs
 fun main() = Day18.runAll()
 
 object Day18 : AocPuzzle<Long, Long>() {
-    override fun solve(input: List<String>): Pair<Long, Long> {
+    override fun solve1(input: List<String>): Long {
         var pos = Vec2i(0, 0)
         val verts = input.map {
             val (a, b, _) = it.split(" ")
@@ -16,8 +16,11 @@ object Day18 : AocPuzzle<Long, Long>() {
             pos += dir.step * dist
             pos
         }
+        return verts.computeArea()
+    }
 
-        pos = Vec2i(0, 0)
+    override fun solve2(input: List<String>): Long {
+        var pos = Vec2i(0, 0)
         val verts2 = input.map {
             val code = it.split(" ")[2].removeSurrounding("(#", ")")
             val dir = Direction.entries[code.last().digitToInt()]
@@ -25,8 +28,7 @@ object Day18 : AocPuzzle<Long, Long>() {
             pos += dir.step * dist
             pos
         }
-
-        return verts.computeArea() to verts2.computeArea()
+        return verts2.computeArea()
     }
 }
 

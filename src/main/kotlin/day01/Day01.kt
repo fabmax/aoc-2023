@@ -5,15 +5,11 @@ import AocPuzzle
 fun main() = Day01.runAll()
 
 object Day01 : AocPuzzle<Int, Int>() {
-    override fun solve(input: List<String>): Pair<Int, Int> {
-        return partOne(input) to partTwo(input)
-    }
-
-    override fun test1(input: List<String>): Int {
+    override fun solve1(input: List<String>): Int {
         return partOne(input)
     }
 
-    override fun test2(input: List<String>): Int {
+    override fun solve2(input: List<String>): Int {
         return partTwo(input)
     }
 

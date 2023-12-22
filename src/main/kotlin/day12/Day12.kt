@@ -5,25 +5,26 @@ import AocPuzzle
 fun main() = Day12.runAll()
 
 object Day12 : AocPuzzle<Long, Long>() {
-
-    override fun solve(input: List<String>): Pair<Long, Long> {
+    override fun solve1(input: List<String>): Long {
         val conditionsAndGroups = input.map { line ->
             val (conditions, groups) = line.split(" ")
             val counts = groups.split(",").map { it.toInt() }
             conditions to counts
         }
+        return conditionsAndGroups.sumOf { (conditions, groups) -> countArrangements(conditions, groups) }
+    }
 
-        val answer1 = conditionsAndGroups.sumOf { (conditions, groups) ->
-            countArrangements(conditions, groups)
+    override fun solve2(input: List<String>): Long {
+        val conditionsAndGroups = input.map { line ->
+            val (conditions, groups) = line.split(" ")
+            val counts = groups.split(",").map { it.toInt() }
+            conditions to counts
         }
-
-        val answer2 = conditionsAndGroups.sumOf { (conds, grps) ->
+        return conditionsAndGroups.sumOf { (conds, grps) ->
             val conditions = (1..5).joinToString(separator = "?") { conds }
             val groups = (1..5).flatMap { grps }
             countArrangements(conditions, groups)
         }
-
-        return answer1 to answer2
     }
 
     private fun countArrangements(conditions: String, groups: List<Int>): Long {

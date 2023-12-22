@@ -8,26 +8,22 @@ fun main() = Day19BruteForce.runPuzzle()
 
 object Day19BruteForce : AocPuzzle<Int, Long>() {
 
-    private var nextWorkflowId = 0
-
-    override fun solve(input: List<String>): Pair<Int, Long> {
+    override fun solve1(input: List<String>): Int {
         val (workflowDefs, partDefs) = input.splitByBlankLines()
-
-        nextWorkflowId = 2
         val workflowsByName = workflowDefs.map { Workflow(it) }.associateBy { it.name } + ("A" to Day19.ACCEPT) + ("R" to Day19.REJECT)
         val workflows = Workflows(workflowsByName)
 
-        return part1(workflows, partDefs) to part2(workflows)
-    }
-
-    fun part1(workflows: Workflows, partDefs: List<String>): Int {
         val parts = partDefs.map { partDef ->
             Day19.NUMBERS.findAll(partDef).map { it.value.toInt() }.toList().toIntArray()
         }
         return parts.filter { workflows.isAccepted(it) }.sumOf { it.sum() }
     }
 
-    fun part2(workflows: Workflows): Long {
+    override fun solve2(input: List<String>): Long {
+        val (workflowDefs, _) = input.splitByBlankLines()
+        val workflowsByName = workflowDefs.map { Workflow(it) }.associateBy { it.name } + ("A" to Day19.ACCEPT) + ("R" to Day19.REJECT)
+        val workflows = Workflows(workflowsByName)
+
         val startTime = System.nanoTime()
 
         val jobs = 32

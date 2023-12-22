@@ -15,15 +15,30 @@ object Day19 : AocPuzzle<Int, Long>() {
     val ACCEPT = Workflow("A", emptyList(), "")
     val REJECT = Workflow("R", emptyList(), "")
 
-    override fun solve(input: List<String>): Pair<Int, Long> {
+    override fun solve1(input: List<String>): Int {
         val (workflowDefs, partsDefs) = input.splitByBlankLines()
-
         val workflows = workflowDefs.map { Workflow(it) }.associateBy { it.name } + ("A" to ACCEPT) + ("R" to REJECT)
-        val parts = partsDefs.map { partDef ->
-            NUMBERS.findAll(partDef).map { it.value.toInt() }.toList()
-        }
+        val parts = partsDefs.map { partDef -> NUMBERS.findAll(partDef).map { it.value.toInt() }.toList() }
 
-        return part1(workflows, parts) to part2(workflows)
+        val accepted = parts.filter { part ->
+            var wf: Workflow = workflows["in"]!!
+            var isAccepted = false
+            while (!isAccepted && wf != REJECT) {
+                wf = workflows[wf.nextWorkflow(part)]!!
+                if (wf == ACCEPT) {
+                    isAccepted = true
+                }
+            }
+            isAccepted
+        }
+        return accepted.sumOf { it.sum() }
+    }
+
+    override fun solve2(input: List<String>): Long {
+        val (workflowDefs, _) = input.splitByBlankLines()
+        val workflows = workflowDefs.map { Workflow(it) }.associateBy { it.name } + ("A" to ACCEPT) + ("R" to REJECT)
+
+        return part2(workflows)
     }
 
     fun part2(workflows: Map<String, Workflow>, xRange: IntRange = 1..4000): Long {
@@ -55,21 +70,6 @@ object Day19 : AocPuzzle<Int, Long>() {
         rng.ranges[0] = xRange
         workflows["in"]!!.traverse(rng)
         return acceptedRanges.sumOf { it.combinations }
-    }
-
-    fun part1(workflows: Map<String, Workflow>, parts: List<Part>): Int {
-        val accepted = parts.filter { part ->
-            var wf: Workflow = workflows["in"]!!
-            var isAccepted = false
-            while (!isAccepted && wf != REJECT) {
-                wf = workflows[wf.nextWorkflow(part)]!!
-                if (wf == ACCEPT) {
-                    isAccepted = true
-                }
-            }
-            isAccepted
-        }
-        return accepted.sumOf { it.sum() }
     }
 
     fun Workflow.nextWorkflow(part: Part): String {
