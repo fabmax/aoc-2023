@@ -60,16 +60,19 @@ object Day21 : AocPuzzle<Int, Long>() {
         val oddCount = map.possiblePositions(131).size.toLong()
         val evenCount = map.possiblePositions(132).size.toLong()
 
+        // occurrences per field type
         val extent = n / s
         val evenFields = extent * extent
         val oddFields = (extent-1) * (extent-1)
         val borderFieldsA = extent
         val borderFieldsB = extent-1
 
+        // add them all up!
         return evenFields * evenCount +
                 oddFields * oddCount +
-                borderStarts.sumOf { borderCountsA[it]!! * borderFieldsA + borderCountsB[it]!! * borderFieldsB } +
-                cornerStarts.sumOf { cornerCounts[it]!! }
+                borderCountsA.values.sumOf { it * borderFieldsA } +
+                borderCountsB.values.sumOf { it * borderFieldsB } +
+                cornerCounts.values.sumOf { it }
     }
 
     @Suppress("unused")
