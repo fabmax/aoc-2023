@@ -2,7 +2,7 @@ package day18
 
 import AocPuzzle
 import de.fabmax.kool.math.Vec2i
-import kotlin.math.abs
+import manhattanDistance
 
 fun main() = Day18.runAll()
 
@@ -34,12 +34,10 @@ object Day18 : AocPuzzle<Long, Long>() {
 
 fun List<Vec2i>.computeArea(): Long {
     val doubleArea = windowed(2) { (i, j) ->
-        (i.y + j.y) * (i.x - j.x).toLong() + i.distance(j).toLong()
-    }.sum() + first().distance(last()) + 2L
+        (i.y + j.y) * (i.x - j.x).toLong() + i.manhattanDistance(j).toLong()
+    }.sum() + first().manhattanDistance(last()) + 2L
     return doubleArea / 2L
 }
-
-fun Vec2i.distance(other: Vec2i):Int = abs(x - other.x) + abs(y - other.y)
 
 enum class Direction(val step: Vec2i) {
     R(Vec2i(1, 0)),

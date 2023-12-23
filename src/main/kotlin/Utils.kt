@@ -1,3 +1,8 @@
+@file:Suppress("unused")
+
+import de.fabmax.kool.math.Vec2i
+import kotlin.math.abs
+
 fun findPrimeFactors(number: Int, primes: List<Int>): List<Int> {
     return primes.filter { prime -> number % prime == 0 }
 }
@@ -20,6 +25,8 @@ fun IntRange.clipLower(min: Int): IntRange {
 fun IntRange.clipUpper(max: Int): IntRange {
     return (first..kotlin.math.min(last, max))
 }
+
+fun Vec2i.manhattanDistance(other: Vec2i):Int = abs(x - other.x) + abs(y - other.y)
 
 fun findPrimes(upperLimit: Int): List<Int> = (2..upperLimit).filter { it.isPrime }
 

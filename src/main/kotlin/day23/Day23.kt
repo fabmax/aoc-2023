@@ -2,6 +2,11 @@ package day23
 
 import AocPuzzle
 import de.fabmax.kool.math.Vec2i
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
+import java.util.concurrent.atomic.AtomicInteger
 
 fun main() = Day23.runAll()
 
@@ -44,29 +49,35 @@ object Day23 : AocPuzzle<Int, Int>() {
         fun findLongestPath(): Int {
             val startField = fields[start]!!
             val destField = fields[dest]!!
-            return searchPaths(startField, destField.pos, setOf(startField), 0)
-        }
 
-        private fun searchPaths(start: Field, dest: Vec2i, path: Set<Field>, pathDist: Int): Int {
-            if (start.pos == dest) {
-                return pathDist
-            }
+            return runBlocking(Dispatchers.Default) {
+                val maxWorkers = 128
+                val workers = AtomicInteger(0)
 
-            val nexts = start.nexts.filter { it.first !in path }
-            return if (nexts.isNotEmpty()) {
-                nexts.maxOf { (next, dist) ->
-                    val newDist = pathDist + dist
-                    if (newDist > next.maxPathLen * 0.3) {
-                        // this path is significantly longer than previous longest
-                        next.maxPathLen = newDist
-                        searchPaths(next, dest, path + next, newDist)
+                suspend fun searchPaths(start: Field, dest: Vec2i, path: Set<Field>, pathDist: Int): Int {
+                    if (start.pos == dest) {
+                        return pathDist
+                    }
 
-                    } else {
-                        -1
+                    val nexts = start.nexts
+                        .filter { it.first !in path }
+
+                    return if (nexts.isEmpty()) -1 else {
+                        if (workers.addAndGet(nexts.size) < maxWorkers) {
+                            nexts.map { (next, dist) ->
+                                async {
+                                    searchPaths(next, dest, path + next, pathDist + dist)
+                                }
+                            }.awaitAll().max()
+                        } else {
+                            nexts.maxOf { (next, dist) ->
+                                searchPaths(next, dest, path + next, pathDist + dist)
+                            }
+                        }
                     }
                 }
-            } else {
-                -1
+
+                searchPaths(startField, destField.pos, setOf(startField), 0)
             }
         }
 
@@ -113,8 +124,6 @@ object Day23 : AocPuzzle<Int, Int>() {
 
     data class Field(val pos: Vec2i, val type: Char) {
         val nexts = mutableListOf<Pair<Field, Int>>()
-
-        var maxPathLen = -1
     }
 
     val steps = listOf(Vec2i(1, 0), Vec2i(-1, 0), Vec2i(0, 1), Vec2i(0, -1))
