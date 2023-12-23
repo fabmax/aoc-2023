@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
+import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
 fun main() = Day23.runAll()
@@ -20,7 +21,7 @@ object Day23 : AocPuzzle<Int, Int>() {
         return Maze(input, true).findLongestPath()
     }
 
-    class Maze(input: List<String>, val allowReverseSlopes: Boolean) {
+    class Maze(val input: List<String>, val allowReverseSlopes: Boolean) {
         val height = input.size
         val width = input[0].length
 
@@ -28,56 +29,60 @@ object Day23 : AocPuzzle<Int, Int>() {
         val dest = Vec2i(width - 2, height - 1)
 
         val fields = mutableMapOf<Vec2i, Field>()
+        val junctions: Map<Vec2i, Junction>
 
         init {
+            var id = 0
             for (y in input.indices) {
                 for (x in input[0].indices) {
                     val f = input[y][x]
                     if (f != '#') {
-                        fields[Vec2i(x, y)] = Field(Vec2i(x, y), f)
+                        fields[Vec2i(x, y)] = Field(id++, Vec2i(x, y), f)
                     }
                 }
             }
 
-            fields.values
+            junctions = fields.values
                 .filter { it.neighbors().size != 2 }
-                .forEach { field ->
-                    field.nexts += field.neighborJunctions()
-                }
+                .mapIndexed { i, field -> Junction(i, field) }
+                .associateBy { it.field.pos }
+            junctions.values.forEach { it.connectTo(it.field.neighborJunctions()) }
         }
 
         fun findLongestPath(): Int {
-            val startField = fields[start]!!
-            val destField = fields[dest]!!
+            val startJunction = junctions[start]!!
 
             return runBlocking(Dispatchers.Default) {
                 val maxWorkers = 128
                 val workers = AtomicInteger(0)
 
-                suspend fun searchPaths(start: Field, dest: Vec2i, path: Set<Field>, pathDist: Int): Int {
-                    if (start.pos == dest) {
+                suspend fun searchPaths(start: Junction, dest: Vec2i, path: BitSet, pathDist: Int): Int {
+                    if (start.field.pos == dest) {
                         return pathDist
                     }
 
-                    val nexts = start.nexts
-                        .filter { it.first !in path }
+                    val nexts = start.nexts.filter { !path.get(it.first.id) }
 
                     return if (nexts.isEmpty()) -1 else {
                         if (workers.addAndGet(nexts.size) < maxWorkers) {
                             nexts.map { (next, dist) ->
                                 async {
-                                    searchPaths(next, dest, path + next, pathDist + dist)
+                                    val nextPath = BitSet().apply { or(path); set(next.id) }
+                                    searchPaths(next, dest, nextPath, pathDist + dist)
                                 }
                             }.awaitAll().max()
                         } else {
                             nexts.maxOf { (next, dist) ->
-                                searchPaths(next, dest, path + next, pathDist + dist)
+                                val nextPath = BitSet().apply { or(path); set(next.id) }
+                                searchPaths(next, dest, nextPath, pathDist + dist)
                             }
                         }
                     }
                 }
 
-                searchPaths(startField, destField.pos, setOf(startField), 0)
+                val bitSet = BitSet(junctions.size)
+                bitSet.set(startJunction.id)
+                searchPaths(startJunction, dest, bitSet, 0)
             }
         }
 
@@ -120,11 +125,19 @@ object Day23 : AocPuzzle<Int, Int>() {
 
             return neighbors().mapNotNull { nextJunction(it) }
         }
+
+        inner class Junction(val id: Int, val field: Field) {
+            private val _nexts = mutableListOf<Pair<Junction, Int>>()
+            val nexts: List<Pair<Junction, Int>>
+                get() = _nexts
+
+            fun connectTo(junctionsFields: List<Pair<Field, Int>>) {
+                _nexts += junctionsFields.map { (field, dist) -> junctions[field.pos]!! to dist }
+            }
+        }
     }
 
-    data class Field(val pos: Vec2i, val type: Char) {
-        val nexts = mutableListOf<Pair<Field, Int>>()
-    }
+    data class Field(val id: Int, val pos: Vec2i, val type: Char)
 
     val steps = listOf(Vec2i(1, 0), Vec2i(-1, 0), Vec2i(0, 1), Vec2i(0, -1))
 }
