@@ -1,4 +1,5 @@
 .idea
 .gradle
+.httpCache
 inputs
 build
