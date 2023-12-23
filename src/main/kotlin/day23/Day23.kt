@@ -2,12 +2,8 @@ package day23
 
 import AocPuzzle
 import de.fabmax.kool.math.Vec2i
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.runBlocking
 import java.util.*
-import java.util.concurrent.atomic.AtomicInteger
+import kotlin.math.max
 
 fun main() = Day23.runAll()
 
@@ -52,38 +48,28 @@ object Day23 : AocPuzzle<Int, Int>() {
         fun findLongestPath(): Int {
             val startJunction = junctions[start]!!
 
-            return runBlocking(Dispatchers.Default) {
-                val maxWorkers = 128
-                val workers = AtomicInteger(0)
-
-                suspend fun searchPaths(start: Junction, dest: Vec2i, path: BitSet, pathDist: Int): Int {
-                    if (start.field.pos == dest) {
-                        return pathDist
-                    }
-
-                    val nexts = start.nexts.filter { !path.get(it.first.id) }
-
-                    return if (nexts.isEmpty()) -1 else {
-                        if (workers.addAndGet(nexts.size) < maxWorkers) {
-                            nexts.map { (next, dist) ->
-                                async {
-                                    val nextPath = BitSet().apply { or(path); set(next.id) }
-                                    searchPaths(next, dest, nextPath, pathDist + dist)
-                                }
-                            }.awaitAll().max()
-                        } else {
-                            nexts.maxOf { (next, dist) ->
-                                val nextPath = BitSet().apply { or(path); set(next.id) }
-                                searchPaths(next, dest, nextPath, pathDist + dist)
-                            }
-                        }
-                    }
+            fun searchPaths(start: Junction, dest: Vec2i, path: BitSet, pathDist: Int): Int {
+                if (start.field.pos == dest) {
+                    return pathDist
                 }
 
-                val bitSet = BitSet(junctions.size)
-                bitSet.set(startJunction.id)
-                searchPaths(startJunction, dest, bitSet, 0)
+                val nexts = start.neighborDists
+                    .filter { (junction, _) -> !path.get(junction.id) }
+                    // might not work for all input but 2x faster
+                    .filter { (junction, dist) -> pathDist + dist > junction.longestDist * 0.125 }
+
+                return if (nexts.isEmpty()) -1 else {
+                    nexts.maxOf { (next, dist) ->
+                        next.longestDist = max(next.longestDist, pathDist + dist)
+                        val nextPath = BitSet().apply { or(path); set(next.id) }
+                        searchPaths(next, dest, nextPath, pathDist + dist)
+                    }
+                }
             }
+
+            val bitSet = BitSet(junctions.size)
+            bitSet.set(startJunction.id)
+            return searchPaths(startJunction, dest, bitSet, 0)
         }
 
         fun Field.neighbors(): List<Field> {
@@ -128,8 +114,10 @@ object Day23 : AocPuzzle<Int, Int>() {
 
         inner class Junction(val id: Int, val field: Field) {
             private val _nexts = mutableListOf<Pair<Junction, Int>>()
-            val nexts: List<Pair<Junction, Int>>
+            val neighborDists: List<Pair<Junction, Int>>
                 get() = _nexts
+
+            var longestDist = 0
 
             fun connectTo(junctionsFields: List<Pair<Field, Int>>) {
                 _nexts += junctionsFields.map { (field, dist) -> junctions[field.pos]!! to dist }
