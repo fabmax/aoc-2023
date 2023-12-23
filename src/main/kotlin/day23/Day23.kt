@@ -92,23 +92,21 @@ object Day23 : AocPuzzle<Int, Int>() {
                 var prev = start
 
                 while (nexts.isNotEmpty()) {
-                    when (nexts.size) {
-                        1 -> {
-                            val next = nexts[0]
-                            if (next.pos == dest) {
-                                return next to distance + 1
-                            }
-                            nexts = next.neighbors().filter { it != prev }
-                            prev = next
-                            distance++
+                    if (nexts.size == 1) {
+                        val next = nexts[0]
+                        if (next.pos == dest) {
+                            return next to distance + 1
                         }
-                        else -> {
-                            return prev to distance
-                        }
+                        nexts = next.neighbors().filter { it != prev }
+                        prev = next
+                        distance++
+                    } else {
+                        return prev to distance
                     }
                 }
                 return null
             }
+
             return neighbors().mapNotNull { nextJunction(it) }
         }
     }
