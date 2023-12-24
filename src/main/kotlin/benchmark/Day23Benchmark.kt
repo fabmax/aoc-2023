@@ -34,7 +34,7 @@ class Day23Benchmark {
     @Benchmark
     fun part2Fast() {
         target.prepareRun(AocPuzzle.Run.PuzzleRun)
-        Day23.Maze(Day23.input, true).findLongestPath()
+        Day23.Maze(Day23.input, true).findLongestPathFast()
     }
 
     @Benchmark

@@ -8,14 +8,15 @@ fun main() = Day23.runAll()
 object Day23 : AocPuzzle<Int, Int>() {
 
     override fun solve1(input: List<String>): Int {
-        return Maze(input, false).findLongestPath()
+        return Maze(input, false).findLongestPathExhaustive()
     }
 
     override fun solve2(input: List<String>): Int {
         // safe but slower
         return Maze(input, true).findLongestPathExhaustive()
-        // faster but might miss the correct answer
-        //return Maze(input, true).findLongestPath()
+
+        // faster but might miss the correct answer (smaller threshold makes it safer and slower)
+        //return Maze(input, true).findLongestPathFast(0.3f)
     }
 
     class Maze(val input: List<String>, val allowReverseSlopes: Boolean) {
@@ -46,7 +47,7 @@ object Day23 : AocPuzzle<Int, Int>() {
             junctions.values.forEach { it.connectTo(it.field.neighborJunctions()) }
         }
 
-        fun findLongestPath(): Int {
+        fun findLongestPathFast(threshold: Float = 0.3f): Int {
             val startJunction = junctions[start]!!
 
             fun searchPaths(start: Junction, dest: Vec2i, occupiedNodes: Long, pathDist: Int): Int {
@@ -58,7 +59,7 @@ object Day23 : AocPuzzle<Int, Int>() {
                 return if (nexts.isEmpty()) -1 else {
                     nexts.maxOf { (next, dist) ->
                         val nextDist = pathDist + dist
-                        if (nextDist > next.thresholdDist * 0.3) {
+                        if (nextDist > next.thresholdDist * threshold) {
                             next.thresholdDist = nextDist
                             searchPaths(next, dest, occupiedNodes or (1L shl next.id), nextDist)
                         } else {
