@@ -9,7 +9,7 @@ import kotlinx.benchmark.*
 @State(Scope.Benchmark)
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(BenchmarkTimeUnit.MILLISECONDS)
-class AocBenchmark {
+class Day23Benchmark {
 
     val target = Day23
 
@@ -32,8 +32,15 @@ class AocBenchmark {
     }
 
     @Benchmark
-    fun part2() {
+    fun part2Fast() {
         target.prepareRun(AocPuzzle.Run.PuzzleRun)
-        target.solve2(target.input)
+        Day23.Maze(Day23.input, true).findLongestPath()
     }
+
+    @Benchmark
+    fun part2Exhaustive() {
+        target.prepareRun(AocPuzzle.Run.PuzzleRun)
+        Day23.Maze(Day23.input, true).findLongestPathExhaustive()
+    }
+
 }

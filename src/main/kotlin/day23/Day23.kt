@@ -2,8 +2,6 @@ package day23
 
 import AocPuzzle
 import de.fabmax.kool.math.Vec2i
-import java.util.*
-import kotlin.math.max
 
 fun main() = Day23.runAll()
 
@@ -14,7 +12,10 @@ object Day23 : AocPuzzle<Int, Int>() {
     }
 
     override fun solve2(input: List<String>): Int {
-        return Maze(input, true).findLongestPath()
+        // safe but slower
+        return Maze(input, true).findLongestPathExhaustive()
+        // faster but might miss the correct answer
+        //return Maze(input, true).findLongestPath()
     }
 
     class Maze(val input: List<String>, val allowReverseSlopes: Boolean) {
@@ -39,7 +40,7 @@ object Day23 : AocPuzzle<Int, Int>() {
             }
 
             junctions = fields.values
-                .filter { it.neighbors().size != 2 }
+                .filter { it.neighbors().size > 2 || it.pos == start || it.pos == dest }
                 .mapIndexed { i, field -> Junction(i, field) }
                 .associateBy { it.field.pos }
             junctions.values.forEach { it.connectTo(it.field.neighborJunctions()) }
@@ -48,28 +49,45 @@ object Day23 : AocPuzzle<Int, Int>() {
         fun findLongestPath(): Int {
             val startJunction = junctions[start]!!
 
-            fun searchPaths(start: Junction, dest: Vec2i, path: BitSet, pathDist: Int): Int {
+            fun searchPaths(start: Junction, dest: Vec2i, occupiedNodes: Long, pathDist: Int): Int {
                 if (start.field.pos == dest) {
                     return pathDist
                 }
 
-                val nexts = start.neighborDists
-                    .filter { (junction, _) -> !path.get(junction.id) }
-                    // might not work for all input but 2x faster
-                    .filter { (junction, dist) -> pathDist + dist > junction.longestDist * 0.125 }
-
+                val nexts = start.neighborDists.filter { (junction, _) -> occupiedNodes and (1L shl junction.id) == 0L }
                 return if (nexts.isEmpty()) -1 else {
                     nexts.maxOf { (next, dist) ->
-                        next.longestDist = max(next.longestDist, pathDist + dist)
-                        val nextPath = BitSet().apply { or(path); set(next.id) }
-                        searchPaths(next, dest, nextPath, pathDist + dist)
+                        val nextDist = pathDist + dist
+                        if (nextDist > next.thresholdDist * 0.3) {
+                            next.thresholdDist = nextDist
+                            searchPaths(next, dest, occupiedNodes or (1L shl next.id), nextDist)
+                        } else {
+                            -1
+                        }
                     }
                 }
             }
 
-            val bitSet = BitSet(junctions.size)
-            bitSet.set(startJunction.id)
-            return searchPaths(startJunction, dest, bitSet, 0)
+            return searchPaths(startJunction, dest, 1L shl startJunction.id, 0)
+        }
+
+        fun findLongestPathExhaustive(): Int {
+            val startJunction = junctions[start]!!
+
+            fun searchPaths(start: Junction, dest: Vec2i, occupiedNodes: Long, pathDist: Int): Int {
+                if (start.field.pos == dest) {
+                    return pathDist
+                }
+
+                val nexts = start.neighborDists.filter { (junction, _) -> occupiedNodes and (1L shl junction.id) == 0L }
+                return if (nexts.isEmpty()) -1 else {
+                    nexts.maxOf { (next, dist) ->
+                        searchPaths(next, dest, occupiedNodes or (1L shl next.id), pathDist + dist)
+                    }
+                }
+            }
+
+            return searchPaths(startJunction, dest, 1L shl startJunction.id, 0)
         }
 
         fun Field.neighbors(): List<Field> {
@@ -117,7 +135,7 @@ object Day23 : AocPuzzle<Int, Int>() {
             val neighborDists: List<Pair<Junction, Int>>
                 get() = _nexts
 
-            var longestDist = 0
+            var thresholdDist = 0
 
             fun connectTo(junctionsFields: List<Pair<Field, Int>>) {
                 _nexts += junctionsFields.map { (field, dist) -> junctions[field.pos]!! to dist }
