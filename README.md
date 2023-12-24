@@ -50,8 +50,15 @@ So far, all [solutions](src/main/kotlin) work for both parts. There are a few no
 
 - **[Day 22:](src/main/kotlin/day22/Day22.kt) Sand Slabs**
 
-  Not too special, but there's another nice visualization for zhe brick stack.
- 
+  Not too special, but there's another nice visualization for the brick stack.
+
+
+- **[Day 24:](src/main/kotlin/day24/Day24.kt) Never Tell Me The Odds**
+
+  Very hard part2. Solved it by approximating the collision times of two hailstones with the rock. Not the most elegant
+  solution but I'm happy with it.
+
+
 
 ## Running the Puzzles
 
