@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-import de.fabmax.kool.math.Vec2i
+import de.fabmax.kool.math.*
 import kotlin.math.abs
 
 fun findPrimeFactors(number: Int, primes: List<Int>): List<Int> {
@@ -27,6 +27,41 @@ fun IntRange.clipUpper(max: Int): IntRange {
 }
 
 fun Vec2i.manhattanDistance(other: Vec2i):Int = abs(x - other.x) + abs(y - other.y)
+
+operator fun Vec2i.component1(): Int = x
+operator fun Vec2i.component2(): Int = y
+
+fun Vec3i(str: String, delim: Char = ','): Vec3i {
+    val (x, y, z) = str.split(delim).filter { it.isNotBlank() }.map { it.trim().toInt() }
+    return Vec3i(x, y, z)
+}
+
+fun Vec3f(str: String, delim: Char = ','): Vec3f {
+    val (x, y, z) = str.split(delim).filter { it.isNotBlank() }.map { it.trim().toFloat() }
+    return Vec3f(x, y, z)
+}
+
+fun Vec3d(str: String, delim: Char = ','): Vec3d {
+    val (x, y, z) = str.split(delim).filter { it.isNotBlank() }.map { it.trim().toDouble() }
+    return Vec3d(x, y, z)
+}
+
+val Vec3i.xy: Vec2i get() = Vec2i(x, y)
+val Vec3f.xy: Vec2f get() = Vec2f(x, y)
+val Vec3d.xy: Vec2d get() = Vec2d(x, y)
+
+fun intersectLines(a1: Vec2d, a2: Vec2d, b1: Vec2d, b2: Vec2d): Vec2d? {
+    val denom = (a1.x - a2.x) * (b1.y - b2.y) - (a1.y - a2.y) * (b1.x - b2.x)
+    if (denom != 0.0) {
+        val a = a1.x * a2.y - a1.y * a2.x
+        val b = b1.x * b2.y - b1.y * b2.x
+        val x = (a * (b1.x - b2.x) - b * (a1.x - a2.x)) / denom
+        val y = (a * (b1.y - b2.y) - b * (a1.y - a2.y)) / denom
+        return Vec2d(x, y)
+    }
+    // lines are parallel
+    return null
+}
 
 fun findPrimes(upperLimit: Int): List<Int> = (2..upperLimit).filter { it.isPrime }
 
