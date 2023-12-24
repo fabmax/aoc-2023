@@ -2,10 +2,7 @@ package day24
 
 import AocPuzzle
 import Vec3d
-import component1
-import component2
 import de.fabmax.kool.math.MutableVec3d
-import de.fabmax.kool.math.Vec2i
 import de.fabmax.kool.math.Vec3d
 import intersectLines
 import xy
@@ -22,11 +19,11 @@ object Day24 : AocPuzzle<Int, Long>() {
 
         val hailStones = input.map { it.split(" @ ").let { (p, v) -> HailStone(Vec3d(p), Vec3d(v)) } }
 
-        return generateSequence(Vec2i.ZERO) { (i, j) ->
+        return generateSequence(0 to 0) { (i, j) ->
             val incJ = (j + 1) % hailStones.size
             val nextI = if (incJ == 0) i + 1 else i
             val nextJ = max(nextI + 1, incJ)
-            if (nextJ < hailStones.size) Vec2i(nextI, nextJ) else null
+            if (nextJ < hailStones.size) nextI to nextJ else null
         }.count { (i, j) ->
             hailStones[i].intersectsXy(hailStones[j], boundsMin, boundsMax)
         }
