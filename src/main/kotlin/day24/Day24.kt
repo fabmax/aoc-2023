@@ -38,20 +38,20 @@ object Day24 : AocPuzzle<Int, Long>() {
         var step1 = if (isTestRun()) 1 else 1e10.toLong()
         var step2 = if (isTestRun()) 1 else 1e10.toLong()
         var isStep1 = true
+        var approxDist = Double.POSITIVE_INFINITY
 
         // approximate collision times 1 and 2
-        var dist = Double.POSITIVE_INFINITY
         while (abs(step1) != 0L || abs(step2) != 0L) {
             do {
-                val prevDist = dist
+                val prevDist = approxDist
                 when (isStep1) {
                     true  -> t1 += step1
                     false -> t2 += step2
                 }
                 val a = h1.at(t1)
                 val b = h2.at(t2)
-                dist = hailStones.sumOf { it.distanceToLine(a, b) }
-            } while (dist < prevDist)
+                approxDist = hailStones.sumOf { it.distanceToLine(a, b) }
+            } while (approxDist < prevDist)
 
             when (isStep1) {
                 true  -> step1 /= -10
@@ -61,25 +61,19 @@ object Day24 : AocPuzzle<Int, Long>() {
         }
 
         // approximated collision times are 1 off -> do final refinement
-        var bestDist = dist
-        for (s1 in t1 - 5L .. t1 + 5L) {
-            for (s2 in t2 - 5L .. t2 + 5L) {
+        val (r1, r2) = (t1 - 5L .. t1 + 5L)
+            .flatMap { s -> (t2 - 5L .. t2 + 5L).map { s to it } }
+            .minBy { (s1, s2) ->
                 val a = h1.at(s1)
                 val b = h2.at(s2)
-                val d = hailStones.sumOf { it.distanceToLine(a, b) }
-                if (d < bestDist) {
-                    bestDist = d
-                    t1 = s1
-                    t2 = s2
-                }
+                hailStones.sumOf { it.distanceToLine(a, b) }
             }
-        }
 
-        // compute hailstone positions at t1 and t2 and derive rock start pos and velocity from that
-        val ht1 = h1.at(t1)
-        val ht2 = h2.at(t2)
-        val rockVel = (ht2 - ht1) / (t2 - t1).toDouble()
-        val rockPos = ht1 - rockVel * t1.toDouble()
+        // compute hailstone positions at refined times r1 and r2 and derive rock start pos and velocity from that
+        val ht1 = h1.at(r1)
+        val ht2 = h2.at(r2)
+        val rockVel = (ht2 - ht1) / (r2 - r1).toDouble()
+        val rockPos = ht1 - rockVel * r1.toDouble()
         return (rockPos.x + rockPos.y + rockPos.z).toLong()
     }
 
