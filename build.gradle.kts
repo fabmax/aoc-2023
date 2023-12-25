@@ -46,7 +46,7 @@ benchmark {
             iterations = 5
             iterationTime = 1000
             iterationTimeUnit = "millis"
-            include("Day24")
+            include("Day25")
         }
     }
     targets {
