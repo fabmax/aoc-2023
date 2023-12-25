@@ -59,6 +59,12 @@ So far, all [solutions](src/main/kotlin) work for both parts. There are a few no
   solution but I'm happy with it.
 
 
+- **[Day 25:](src/main/kotlin/day25/Day25.kt) Snowverload**
+
+  Last one! Find critical edges in a graph. Solved it by finding paths between random nodes and counting the edge
+  occurrences.
+
+
 
 ## Running the Puzzles
 

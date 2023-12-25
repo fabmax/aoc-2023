@@ -12,6 +12,8 @@ repositories {
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:0.4.10")
+    implementation("io.ksmt:ksmt-core:0.5.6")
+    implementation("io.ksmt:ksmt-z3:0.5.6")
 
     implementation("de.fabmax.kool:kool-core:0.14.0-SNAPSHOT")
     implementation("de.fabmax.kool:kool-physics:0.14.0-SNAPSHOT")
