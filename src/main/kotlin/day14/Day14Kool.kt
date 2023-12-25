@@ -513,7 +513,7 @@ fun makeUiScene(day14: Day14Kool) = UiScene {
     }
 }
 
-fun ColumnScope.LabeledText(label: String, text: String, font: Font = sizes.normalText) = Row {
+fun ColumnScope.LabeledText(label: String, text: String, font: Font = sizes.normalText, textColor: Color? = null) = Row {
     modifier
         .margin(sizes.largeGap)
         .width(Grow.Std)
@@ -522,10 +522,11 @@ fun ColumnScope.LabeledText(label: String, text: String, font: Font = sizes.norm
         modifier
             .font(font)
             .width(Grow.Std)
+        textColor?.let { modifier.textColor(it) }
     }
     Text(text) {
-        modifier
-            .font(font)
+        modifier.font(font)
+        textColor?.let { modifier.textColor(it) }
     }
 }
 
