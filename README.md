@@ -68,7 +68,7 @@ So far, all [solutions](src/main/kotlin) work for both parts. There are a few no
 
 ## Running the Puzzles
 
-In order to run the puzzles, you need to place your puzzle input into correctly named `.txt` files in the `inputs/` directory:
+In order to run the puzzles, you need to place your puzzle input into correctly named `.txt` files in the `inputs/2023/` directory:
 The implementation expects the day's puzzle input in a file called `day[xx].txt` where `[xx]` has to be replaced by
 the day number (e.g. `day01.txt` for day 1, `day10.txt` for day 10, etc.)
 

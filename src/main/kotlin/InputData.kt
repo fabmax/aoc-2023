@@ -1,8 +1,8 @@
 import java.io.File
 
-class InputData(val day: Int) {
+class InputData(val year: Int, val day: Int) {
 
-    val puzzleInputRaw = File("inputs/day%02d.txt".format(day)).readText()
+    val puzzleInputRaw = File("inputs/$year/day%02d.txt".format(day)).readText()
     val puzzleInput: List<String>
         get() = puzzleInputRaw.lines().dropLastWhile { it.isBlank() }
 
@@ -15,7 +15,7 @@ class InputData(val day: Int) {
         get() = testInputs.firstOrNull { it.part2 != null }?.part2
 
     init {
-        File("inputs/").listFiles { f: File -> f.name.startsWith("day%02d_test".format(day)) }?.let { testFiles ->
+        File("inputs/$year/").listFiles { f: File -> f.name.startsWith("day%02d_test".format(day)) }?.let { testFiles ->
             testFiles
                 .sortedBy { it.name }
                 .forEach {

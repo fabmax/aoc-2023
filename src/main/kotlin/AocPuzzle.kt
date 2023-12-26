@@ -1,11 +1,12 @@
 abstract class AocPuzzle<A: Any, B: Any> {
 
-    private val day = Regex("""\d+""").find(this::class.simpleName!!)!!.value.toInt()
+    val year = Regex("""\Ay(\d+)""").find(this::class.qualifiedName!!)?.groups?.get(1)?.value?.toInt() ?: 2023
+    val day = Regex("""\d+""").find(this::class.simpleName!!)!!.value.toInt()
 
     var run: Run = Run.TestRun(0)
         private set
 
-    val inputData = InputData(day)
+    val inputData = InputData(year, day)
 
     val input: List<String>
         get() = when(val r = run) {
