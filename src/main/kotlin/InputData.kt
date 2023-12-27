@@ -1,6 +1,6 @@
 import java.io.File
 
-class InputData(val year: Int, val day: Int) {
+class InputData(year: Int, day: Int) {
 
     val puzzleInputRaw = File("inputs/$year/day%02d.txt".format(day)).readText()
     val puzzleInput: List<String>
@@ -8,10 +8,10 @@ class InputData(val year: Int, val day: Int) {
 
     val testInputs = mutableListOf<TestInput>()
 
-    val answerPart1: Long?
+    val answerPart1: String?
         get() = testInputs.firstOrNull { it.part1 != null }?.part1
 
-    val answerPart2: Long?
+    val answerPart2: String?
         get() = testInputs.firstOrNull { it.part2 != null }?.part2
 
     init {
@@ -28,10 +28,10 @@ class InputData(val year: Int, val day: Int) {
         val testInputRaw: String
         val testInput: List<String>
 
-        var test1: Long? = null
-        var test2: Long? = null
-        var part1: Long? = null
-        var part2: Long? = null
+        var test1: String? = null
+        var test2: String? = null
+        var part1: String? = null
+        var part2: String? = null
 
         init {
             val allLines = file.readLines()
@@ -45,13 +45,14 @@ class InputData(val year: Int, val day: Int) {
                 .forEach { meta ->
                     val (key, value) = meta.split("=").map { it.trim() }
                     when (key) {
-                        "test1" -> { test1 = value.toLongOrNull() }
-                        "test2" -> { test2 = value.toLongOrNull() }
-                        "part1" -> { part1 = value.toLongOrNull() }
-                        "part2" -> { part2 = value.toLongOrNull() }
+                        "test1" -> { test1 = parseExpected(value) }
+                        "test2" -> { test2 = parseExpected(value) }
+                        "part1" -> { part1 = parseExpected(value) }
+                        "part2" -> { part2 = parseExpected(value) }
                     }
                 }
         }
 
+        private fun parseExpected(value: String): String? = if (value == "?" || value.isBlank()) null else value.trim()
     }
 }

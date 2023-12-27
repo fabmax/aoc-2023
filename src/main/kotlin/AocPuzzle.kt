@@ -19,13 +19,13 @@ abstract class AocPuzzle<A: Any, B: Any> {
             is Run.PuzzleRun -> inputData.puzzleInputRaw
         }
 
-    val expected1: Long?
+    val expected1: String?
         get() = when(val r = run) {
             is Run.TestRun -> inputData.testInputs[r.testIdx].test1
             is Run.PuzzleRun -> inputData.answerPart1
         }
 
-    val expected2: Long?
+    val expected2: String?
         get() = when(val r = run) {
             is Run.TestRun -> inputData.testInputs[r.testIdx].test2
             is Run.PuzzleRun -> inputData.answerPart2
@@ -85,7 +85,7 @@ abstract class AocPuzzle<A: Any, B: Any> {
         }
     }
 
-    private fun runPart(part: Int, expected: Long?) {
+    private fun runPart(part: Int, expected: String?) {
         try {
             val t = System.nanoTime()
             val answer: Any = if (part == 1) {
@@ -101,12 +101,11 @@ abstract class AocPuzzle<A: Any, B: Any> {
         }
     }
 
-    private fun prefix(answer: Any?, expected: Long?): String {
+    private fun prefix(answer: Any?, expected: String?): String {
         return when {
             expected == null -> "❔ "
-            answer is Int -> if (answer.toLong() == expected) "✅ " else "❌ "
-            answer is Long -> if (answer == expected) "✅ " else "❌ "
-            else -> "❔ "
+            answer.toString() == expected -> "✅ "
+            else -> "❌ "
         }
     }
 
