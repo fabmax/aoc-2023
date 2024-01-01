@@ -1,6 +1,6 @@
 abstract class AocPuzzle<A: Any, B: Any> {
 
-    val year = Regex("""\Ay(\d+)""").find(this::class.qualifiedName!!)?.groups?.get(1)?.value?.toInt() ?: 2023
+    val year = Regex("""\Ay(\d+)""").find(this::class.qualifiedName!!)?.groups?.get(1)!!.value.toInt()
     val day = Regex("""\d+""").find(this::class.simpleName!!)!!.value.toInt()
 
     var run: Run = Run.TestRun(0)

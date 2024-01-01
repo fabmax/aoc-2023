@@ -48,7 +48,7 @@ benchmark {
             iterations = 5
             iterationTime = 1000
             iterationTimeUnit = "millis"
-            include("Day25")
+            include("y2023.*Day25")
         }
     }
     targets {
