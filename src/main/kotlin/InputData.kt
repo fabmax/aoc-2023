@@ -43,7 +43,8 @@ class InputData(year: Int, day: Int) {
                 .map { it.trim() }
                 .filter { it.isNotBlank() }
                 .forEach { meta ->
-                    val (key, value) = meta.split("=").map { it.trim() }
+                    val key = meta.substringBefore('=').trim()
+                    val value = meta.substringAfter('=').trim()
                     when (key) {
                         "test1" -> { test1 = parseExpected(value) }
                         "test2" -> { test2 = parseExpected(value) }

@@ -3,7 +3,7 @@ package y2023.day25
 import AocPuzzle
 import kotlin.random.Random
 
-fun main() = Day25.runPuzzle()
+fun main() = Day25.runAll()
 
 object Day25 : AocPuzzle<Int, Unit>() {
 

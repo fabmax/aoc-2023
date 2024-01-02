@@ -16,6 +16,12 @@ fun List<String>.splitByBlankLines(): List<List<String>> {
     return splitBy { it.isBlank() }
 }
 
+fun <T> ArrayDeque<T>.takeAndRemoveWhile(predicate: (T) -> Boolean): List<T> {
+    val taken = takeWhile(predicate)
+    repeat(taken.size) { removeFirst() }
+    return taken
+}
+
 val IntRange.size: Int get() = if (isEmpty()) 0 else last - first + 1
 
 fun IntRange.clipLower(min: Int): IntRange {

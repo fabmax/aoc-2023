@@ -2,6 +2,7 @@ package y2022.day13
 
 import AocPuzzle
 import splitByBlankLines
+import takeAndRemoveWhile
 import kotlin.math.min
 
 fun main() = Day13.runAll()
@@ -72,12 +73,6 @@ object Day13 : AocPuzzle<Int, Int>() {
                 checkOrder(leftList.data[decider], rightList.data[decider])
             }
         }
-    }
-
-    fun ArrayDeque<Char>.takeAndRemoveWhile(predicate: (Char) -> Boolean): List<Char> {
-        val taken = takeWhile(predicate)
-        repeat(taken.size) { removeFirst() }
-        return taken
     }
 
     sealed class Data
