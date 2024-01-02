@@ -3,6 +3,7 @@ package y2023.day19
 import AocPuzzle
 import clipLower
 import clipUpper
+import extractNumbers
 import size
 import splitByBlankLines
 
@@ -11,14 +12,13 @@ fun main() = Day19.runAll()
 typealias Part = List<Int>
 
 object Day19 : AocPuzzle<Int, Long>() {
-    val NUMBERS = Regex("""(\d+)""")
     val ACCEPT = Workflow("A", emptyList(), "")
     val REJECT = Workflow("R", emptyList(), "")
 
     override fun solve1(input: List<String>): Int {
         val (workflowDefs, partsDefs) = input.splitByBlankLines()
         val workflows = workflowDefs.map { Workflow(it) }.associateBy { it.name } + ("A" to ACCEPT) + ("R" to REJECT)
-        val parts = partsDefs.map { partDef -> NUMBERS.findAll(partDef).map { it.value.toInt() }.toList() }
+        val parts = partsDefs.map { partDef -> partDef.extractNumbers() }
 
         val accepted = parts.filter { part ->
             var wf: Workflow = workflows["in"]!!

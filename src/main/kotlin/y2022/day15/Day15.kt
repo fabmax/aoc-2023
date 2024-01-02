@@ -2,6 +2,7 @@ package y2022.day15
 
 import AocPuzzle
 import de.fabmax.kool.math.Vec2i
+import extractNumbers
 import manhattanDistance
 import size
 import kotlin.math.abs
@@ -41,8 +42,7 @@ object Day15 : AocPuzzle<Int, Long>() {
     }
 
     fun List<String>.mapSensorBeacon(): List<SensorBeacon> = map { line ->
-        val (sensorX, sensorY, beaconX, beaconY) = NUMBERS.findAll(line).flatMap { it.groupValues }.toList()
-            .map { it.toInt() }
+        val (sensorX, sensorY, beaconX, beaconY) = line.extractNumbers()
         val sensor = Vec2i(sensorX, sensorY)
         val beacon = Vec2i(beaconX, beaconY)
         SensorBeacon(sensor, beacon)
@@ -76,6 +76,4 @@ object Day15 : AocPuzzle<Int, Long>() {
             return range
         }
     }
-
-    private val NUMBERS = Regex("""-?\d+""")
 }

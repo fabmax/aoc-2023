@@ -1,6 +1,7 @@
 package y2023.day19
 
 import AocPuzzle
+import extractNumbers
 import splitByBlankLines
 import kotlin.concurrent.thread
 
@@ -13,9 +14,7 @@ object Day19BruteForce : AocPuzzle<Int, Long>() {
         val workflowsByName = workflowDefs.map { Workflow(it) }.associateBy { it.name } + ("A" to Day19.ACCEPT) + ("R" to Day19.REJECT)
         val workflows = Workflows(workflowsByName)
 
-        val parts = partDefs.map { partDef ->
-            Day19.NUMBERS.findAll(partDef).map { it.value.toInt() }.toList().toIntArray()
-        }
+        val parts = partDefs.map { partDef -> partDef.extractNumbers().toIntArray() }
         return parts.filter { workflows.isAccepted(it) }.sumOf { it.sum() }
     }
 

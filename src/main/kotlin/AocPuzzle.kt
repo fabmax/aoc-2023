@@ -63,16 +63,18 @@ abstract class AocPuzzle<A: Any, B: Any> {
         runParts(part1 = true, part2 = true)
     }
 
-    fun runTests() {
+    fun runTests(vararg tests: Int) {
         println("Day $day Tests:")
 
         inputData.testInputs.forEachIndexed { i, test ->
-            println("  [Test ${i+1}]:")
-            prepareRun(Run.TestRun(i))
+            if (tests.isEmpty() || (i+1) in tests) {
+                println("  [Test ${i + 1}]:")
+                prepareRun(Run.TestRun(i))
 
-            val isTestPart1 = test.test1 != null
-            val isTestPart2 = test.test2 != null
-            runParts(isTestPart1, isTestPart2)
+                val isTestPart1 = test.test1 != null
+                val isTestPart2 = test.test2 != null
+                runParts(isTestPart1, isTestPart2)
+            }
         }
     }
 
