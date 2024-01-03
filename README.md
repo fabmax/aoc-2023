@@ -1,10 +1,10 @@
 # Advent of code 2023 (in kotlin)
 
-Solutions to all puzzles (so  far) of [Advent of code 2023](https://adventofcode.com/2023/)
+Solutions to all puzzles of [Advent of code 2023](https://adventofcode.com/2023/)
 
 ## Results
 
-So far, all [solutions](src/main/kotlin) work for both parts. There are a few notable days:
+All [solutions](src/main/kotlin/y2023) work for both parts. There are a few notable days:
 
 - **[Day 5:](src/main/kotlin/y2023/day05/Day05.kt) If You Give A Seed A Fertilizer**
   
@@ -63,9 +63,8 @@ So far, all [solutions](src/main/kotlin) work for both parts. There are a few no
 
   Last one! Find critical edges in a graph. Solved it by finding paths between random nodes and counting the edge
   occurrences.
-
-
-
+ 
+  
 ## Running the Puzzles
 
 In order to run the puzzles, you need to place your puzzle input into correctly named `.txt` files in the `inputs/2023/` directory:
@@ -86,3 +85,8 @@ Where the `?` can be replaced with the expected results for part 1 / part 2 (for
 also keep the `?` or remove the entire entry if the expected result is not yet known. Moreover, if the expected
 test result is only specified for a single part, only that part is executed.
 
+## Previous Advents of Code
+
+From time to time I solve puzzles from the previous years. Solutions are located in their individual packages:
+
+- [y2022](src/main/kotlin/y2022): All solutions for year 2022 (50 stars)
