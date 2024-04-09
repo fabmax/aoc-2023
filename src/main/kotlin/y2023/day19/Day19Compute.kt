@@ -5,10 +5,10 @@ import de.fabmax.kool.KoolConfigJvm
 import de.fabmax.kool.modules.ksl.KslComputeShader
 import de.fabmax.kool.modules.ksl.lang.*
 import de.fabmax.kool.pipeline.ComputeRenderPass
-import de.fabmax.kool.pipeline.StorageTexture2d
-import de.fabmax.kool.pipeline.TexFormat
+import de.fabmax.kool.pipeline.GpuType
+import de.fabmax.kool.pipeline.StorageBuffer2d
 import de.fabmax.kool.scene.scene
-import de.fabmax.kool.util.Int32Buffer
+import de.fabmax.kool.util.launchOnMainThread
 import splitByBlankLines
 import java.io.File
 import kotlin.math.max
@@ -21,8 +21,8 @@ fun main() = KoolApplication(
 
         val computeShader = KslComputeShader("Compute shader test") {
             computeStage(8, 8) {
-                val workflowStorage = storage2d<KslInt1>("workflowStorage")
-                val acceptCounts = storage2d<KslInt1>("acceptCounts")
+                val workflowStorage = storage2d<KslInt1>("workflowStorage", 3)
+                val acceptCounts = storage2d<KslInt1>("acceptCounts", 4000, 4000)
 
                 val startIndex = uniformInt1("startIndex")
                 val acceptIndex = uniformInt1("acceptIndex")
@@ -37,14 +37,14 @@ fun main() = KoolApplication(
                     body {
                         val workflowIdx = int1Var(startIndex)
                         `while`((workflowIdx ne acceptIndex) and (workflowIdx ne rejectIndex)) {
-                            val nextWorkflowIdx = int1Var(storageRead(workflowStorage, int2Value(workflowIdx, 0.const)))
-                            val offsets = int1Var(storageRead(workflowStorage, int2Value(workflowIdx, 1.const)))
+                            val nextWorkflowIdx = int1Var(storageRead(workflowStorage, int2Value(0.const, workflowIdx)))
+                            val offsets = int1Var(storageRead(workflowStorage, int2Value(1.const, workflowIdx)))
                             val ruleStart = int1Var(offsets shr 16.const)
                             val ruleEnd = int1Var(offsets and 0xffff.const)
 
                             workflowIdx set nextWorkflowIdx
                             fori(ruleStart, ruleEnd) { i ->
-                                val rule = int1Var(storageRead(workflowStorage, int2Value(i, 2.const)))
+                                val rule = int1Var(storageRead(workflowStorage, int2Value(2.const, i)))
                                 val op = int1Var(rule and (1 shl 18).const)
                                 val compI = int1Var((rule and (3 shl 16).const) shr 16.const)
                                 val thresh = int1Var(rule and 0xffff.const)
@@ -90,12 +90,12 @@ fun main() = KoolApplication(
             }
         }
 
-        val input = File("inputs/y2023.day19.txt").readLines()
+        val input = File("inputs/2023/day19.txt").readLines()
         val (workflowDefs, _) = input.splitByBlankLines()
         val workflowsByName = workflowDefs.map { Workflow(it) }.associateBy { it.name } + ("A" to Day19.ACCEPT) + ("R" to Day19.REJECT)
 
         val (workflows, storage) = loadWorkflows(workflowsByName)
-        val acceptCounts = StorageTexture2d(4000, 4000, TexFormat.R_I32)
+        val acceptCounts = StorageBuffer2d(4000, 4000, GpuType.INT1)
 
         computeShader.storage2d("workflowStorage", storage)
         computeShader.storage2d("acceptCounts", acceptCounts)
@@ -118,8 +118,8 @@ fun main() = KoolApplication(
         // xLimit 400:
         // cpu: 12916024642920
         // gpu: 12916024642920
-        // Stopping after 567,831 s seconds
-        // 45,084 Gops, estimated total time: 1h:34m
+        // Stopping after 528.202 s seconds
+        // 48.466 Gops, estimated total time: 1h:28m
 
         computeTask.onBeforeDispatch {
             fromS = subStep * 80 + 1
@@ -154,14 +154,14 @@ fun main() = KoolApplication(
     }
 }
 
-fun readAcceptCounts(acceptStorage: StorageTexture2d, expectedCount: Long) {
-    acceptStorage.readbackTextureData {
-        val buf = it.data as Int32Buffer
+fun readAcceptCounts(acceptStorage: StorageBuffer2d, expectedCount: Long) {
+    launchOnMainThread {
+        acceptStorage.readbackBuffer()
 
         var sum = 0L
         for (y in 0 ..< 4000) {
             for (x in 0 ..< 4000) {
-                sum += buf[y * it.width + x]
+                sum += acceptStorage.getI1(y * acceptStorage.sizeX + x)
             }
         }
         println("Accept count:   $sum")
@@ -170,22 +170,20 @@ fun readAcceptCounts(acceptStorage: StorageTexture2d, expectedCount: Long) {
     }
 }
 
-fun loadWorkflows(workflowsByName: Map<String, Workflow>): Pair<Workflows, StorageTexture2d> {
+fun loadWorkflows(workflowsByName: Map<String, Workflow>): Pair<Workflows, StorageBuffer2d> {
     val workflows = Workflows(workflowsByName)
     val numWorkflows = workflows.workflows.size
     val numRules = workflows.rules.size
-    val storage = StorageTexture2d(max(numRules, numWorkflows), 3, TexFormat.R_I32)
-    storage.loadTextureData {
-        it as Int32Buffer
-        for (i in 0 until numWorkflows) {
-            it[i] = workflows.nexts[i]
-        }
-        for (i in 0 until numWorkflows) {
-            it[storage.width + i] = workflows.ruleOffsets[i]
-        }
-        for (i in 0 until numRules) {
-            it[storage.width * 2 + i] = workflows.rules[i]
-        }
+    val storage = StorageBuffer2d(3, max(numRules, numWorkflows), GpuType.INT1)
+
+    for (i in 0 until numWorkflows) {
+        storage[0, i] = workflows.nexts[i]
+    }
+    for (i in 0 until numWorkflows) {
+        storage[1, i] = workflows.ruleOffsets[i]
+    }
+    for (i in 0 until numRules) {
+        storage[2, i] = workflows.rules[i]
     }
     return workflows to storage
 }

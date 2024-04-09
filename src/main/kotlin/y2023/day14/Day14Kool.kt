@@ -35,7 +35,7 @@ fun main() = KoolApplication { ctx ->
 
 fun launchApp(ctx: KoolContext, input: List<String>) {
     launchOnMainThread {
-        Physics.awaitLoaded()
+        Physics.loadAndAwaitPhysics()
 
         val day14 = Day14Kool(input)
         ctx.scenes += day14.scene
@@ -129,31 +129,32 @@ class Day14Kool(val input: List<String>) {
         roundRocks: List<RoundRock>,
         ao: AoPipeline.ForwardAoPipeline,
         shadows: CascadedShadowMap
-    ) = ColorMesh().apply {
-        generate {
-            icoSphere {
-                steps = 1
-                radius = 0.5f
-            }
-        }
-
-        shader = KslPbrShader {
-            color { instanceColor() }
-            shadow { addShadowMap(shadows) }
-            ao { enableSsao(ao.aoMap) }
-            ambientColor = KslLitShader.AmbientColor.Uniform(MdColor.GREY)
-            pipeline { vertices { isInstanced = true } }
-        }
-
+    ): Mesh {
         val rockInstances = MeshInstanceList(listOf(Attribute.INSTANCE_MODEL_MAT, Attribute.INSTANCE_COLOR))
-        instances = rockInstances
-        onUpdate {
-            rockInstances.clear()
-            rockInstances.addInstances(roundRocks.size) { buffer ->
-                roundRocks.forEach {
-                    it.actor.wakeUp()
-                    it.pose.matrixF.putTo(buffer)
-                    it.color.putTo(buffer)
+        return ColorMesh(instances = rockInstances).apply {
+            generate {
+                icoSphere {
+                    steps = 1
+                    radius = 0.5f
+                }
+            }
+
+            shader = KslPbrShader {
+                color { instanceColor() }
+                shadow { addShadowMap(shadows) }
+                ao { enableSsao(ao.aoMap) }
+                ambientColor = KslLitShader.AmbientColor.Uniform(MdColor.GREY)
+                pipeline { vertices { isInstanced = true } }
+            }
+
+            onUpdate {
+                rockInstances.clear()
+                rockInstances.addInstances(roundRocks.size) { buffer ->
+                    roundRocks.forEach {
+                        it.actor.wakeUp()
+                        it.pose.matrixF.putTo(buffer)
+                        it.color.putTo(buffer)
+                    }
                 }
             }
         }

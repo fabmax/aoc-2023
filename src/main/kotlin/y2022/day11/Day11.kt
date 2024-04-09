@@ -21,7 +21,7 @@ object Day11 : AocPuzzle<Int, Long>() {
         val monkeys = input.splitByBlankLines().map { Monkey(it) }
         val factor = monkeys.map { it.testDivisor }.reduce(BigInteger::times)
         val modifier: (BigInteger) -> BigInteger = { wl -> wl % factor }
-        repeat(10000) { i ->
+        repeat(10000) { _ ->
             monkeys.forEach { it.turn(monkeys, modifier) }
         }
         val (maxA, maxB) = monkeys.sortedByDescending { it.inspectionCount }.take(2).map { it.inspectionCount }

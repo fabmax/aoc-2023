@@ -5,7 +5,6 @@ import Vec3d
 import de.fabmax.kool.math.MutableVec3d
 import de.fabmax.kool.math.Vec3d
 import intersectLines
-import xy
 import kotlin.math.abs
 import kotlin.math.max
 

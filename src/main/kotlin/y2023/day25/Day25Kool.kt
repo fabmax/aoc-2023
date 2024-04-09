@@ -37,7 +37,7 @@ object Day25Kool {
 
     fun renderGraph(graph: Map<String, Node>) = scene {
         val nodeList = graph.values.toList()
-        val splitPlane = Plane()
+        val splitPlane = PlaneF()
 
         camera.setClipRange(0.1f, 1000f)
         addGroup {
@@ -50,19 +50,18 @@ object Day25Kool {
             }
         }
 
-        addColorMesh("nodes") {
-            val insts = MeshInstanceList(listOf(Attribute.INSTANCE_MODEL_MAT, Attribute.INSTANCE_COLOR))
+        val nodeInstances = MeshInstanceList(listOf(Attribute.INSTANCE_MODEL_MAT, Attribute.INSTANCE_COLOR))
+        addColorMesh("nodes", instances = nodeInstances) {
             generate {
                 cube { }
             }
             shader = KslBlinnPhongShader {
                 color { instanceColor() }
                 pipeline { vertices { isInstanced = true } }
-                instances = insts
             }
             onUpdate {
-                insts.clear()
-                insts.addInstances(graph.size) { buf ->
+                nodeInstances.clear()
+                nodeInstances.addInstances(graph.size) { buf ->
                     val m = MutableMat4f()
                     graph.values.forEach {
                         m.setIdentity().translate(it).putTo(buf)
@@ -77,7 +76,7 @@ object Day25Kool {
                 clear()
 
                 val samplePlane = (1..50)
-                    .map { Plane(Vec3f.ZERO, nodeList.random().norm(MutableVec3f())) }
+                    .map { PlaneF(Vec3f.ZERO, nodeList.random().normed()) }
                     .maxBy { nodeList.evalPlaneDist(it) }
 
                 if (samplePlane.n dot splitPlane.n < 0f) {
@@ -115,7 +114,7 @@ object Day25Kool {
         }
     }
 
-    fun List<Node>.evalPlaneDist(plane: Plane, n: Int = 50): Double {
+    fun List<Node>.evalPlaneDist(plane: PlaneF, n: Int = 50): Double {
         return (1..n).sumOf {
             plane.distance(random()).toDouble()
         }

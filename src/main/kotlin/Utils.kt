@@ -7,6 +7,27 @@ fun findPrimeFactors(number: Int, primes: List<Int>): List<Int> {
     return primes.filter { prime -> number % prime == 0 }
 }
 
+fun <T> Collection<T>.permutations(): Sequence<List<T>> = sequence {
+    // Heap's algorithm (non-recursive variant)
+    val elems = toMutableList()
+    val cnts = IntArray(elems.size)
+
+    yield(elems.toList())
+    var i = 0
+    while (i < elems.size) {
+        if (cnts[i] < i) {
+            val swapIdx = if (i % 2 == 0) 0 else cnts[i]
+            elems[swapIdx] = elems[i].also { elems[i] = elems[swapIdx] }
+            yield(elems.toList())
+            cnts[i]++
+            i = 0
+        } else {
+            cnts[i] = 0
+            i++
+        }
+    }
+}
+
 inline fun <T> List<T>.splitBy(predicate: (T) -> Boolean): List<List<T>> {
     return (listOf(-1) + indices.filter { predicate(get(it)) } + listOf(size))
         .zipWithNext { from, to -> subList(from + 1, to) }
@@ -34,9 +55,6 @@ fun IntRange.clipUpper(max: Int): IntRange {
 
 fun Vec2i.manhattanDistance(other: Vec2i):Int = abs(x - other.x) + abs(y - other.y)
 
-operator fun Vec2i.component1(): Int = x
-operator fun Vec2i.component2(): Int = y
-
 fun Vec3i(str: String, delim: Char = ','): Vec3i {
     val (x, y, z) = str.split(delim).filter { it.isNotBlank() }.map { it.trim().toInt() }
     return Vec3i(x, y, z)
@@ -51,10 +69,6 @@ fun Vec3d(str: String, delim: Char = ','): Vec3d {
     val (x, y, z) = str.split(delim).filter { it.isNotBlank() }.map { it.trim().toDouble() }
     return Vec3d(x, y, z)
 }
-
-val Vec3i.xy: Vec2i get() = Vec2i(x, y)
-val Vec3f.xy: Vec2f get() = Vec2f(x, y)
-val Vec3d.xy: Vec2d get() = Vec2d(x, y)
 
 fun intersectLines(a1: Vec2d, a2: Vec2d, b1: Vec2d, b2: Vec2d): Vec2d? {
     val denom = (a1.x - a2.x) * (b1.y - b2.y) - (a1.y - a2.y) * (b1.x - b2.x)
