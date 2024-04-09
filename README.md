@@ -2,6 +2,9 @@
 
 Solutions to all puzzles of [Advent of code 2023](https://adventofcode.com/2023/)
 
+I was awarded ["community star"](https://blog.jetbrains.com/kotlin/2024/02/advent-of-code-in-kotlin-2023-winners/)
+by JetBrains :smile:
+
 ## Results
 
 All [solutions](src/main/kotlin/y2023) work for both parts. There are a few notable days:
@@ -90,3 +93,4 @@ test result is only specified for a single part, only that part is executed.
 From time to time I solve puzzles from the previous years. Solutions are located in their individual packages:
 
 - [y2022](src/main/kotlin/y2022): All solutions for year 2022 (50 stars)
+- [y2015](src/main/kotlin/y2015): Days 1 to 21 for year 2015 (42 stars so far)
