@@ -1,11 +1,12 @@
 abstract class AocPuzzle<A: Any, B: Any> {
 
-    private val day = Regex("""\d+""").find(this::class.simpleName!!)!!.value.toInt()
+    val year = Regex("""\Ay(\d+)""").find(this::class.qualifiedName!!)?.groups?.get(1)!!.value.toInt()
+    val day = Regex("""\d+""").find(this::class.simpleName!!)!!.value.toInt()
 
     var run: Run = Run.TestRun(0)
         private set
 
-    val inputData = InputData(day)
+    val inputData = InputData(year, day)
 
     val input: List<String>
         get() = when(val r = run) {
@@ -18,13 +19,13 @@ abstract class AocPuzzle<A: Any, B: Any> {
             is Run.PuzzleRun -> inputData.puzzleInputRaw
         }
 
-    val expected1: Long?
+    val expected1: String?
         get() = when(val r = run) {
             is Run.TestRun -> inputData.testInputs[r.testIdx].test1
             is Run.PuzzleRun -> inputData.answerPart1
         }
 
-    val expected2: Long?
+    val expected2: String?
         get() = when(val r = run) {
             is Run.TestRun -> inputData.testInputs[r.testIdx].test2
             is Run.PuzzleRun -> inputData.answerPart2
@@ -62,16 +63,18 @@ abstract class AocPuzzle<A: Any, B: Any> {
         runParts(part1 = true, part2 = true)
     }
 
-    fun runTests() {
+    fun runTests(vararg tests: Int) {
         println("Day $day Tests:")
 
         inputData.testInputs.forEachIndexed { i, test ->
-            println("  [Test ${i+1}]:")
-            prepareRun(Run.TestRun(i))
+            if (tests.isEmpty() || (i+1) in tests) {
+                println("  [Test ${i + 1}]:")
+                prepareRun(Run.TestRun(i))
 
-            val isTestPart1 = test.test1 != null
-            val isTestPart2 = test.test2 != null
-            runParts(isTestPart1, isTestPart2)
+                val isTestPart1 = test.test1 != null
+                val isTestPart2 = test.test2 != null
+                runParts(isTestPart1, isTestPart2)
+            }
         }
     }
 
@@ -84,7 +87,7 @@ abstract class AocPuzzle<A: Any, B: Any> {
         }
     }
 
-    private fun runPart(part: Int, expected: Long?) {
+    private fun runPart(part: Int, expected: String?) {
         try {
             val t = System.nanoTime()
             val answer: Any = if (part == 1) {
@@ -100,12 +103,11 @@ abstract class AocPuzzle<A: Any, B: Any> {
         }
     }
 
-    private fun prefix(answer: Any?, expected: Long?): String {
+    private fun prefix(answer: Any?, expected: String?): String {
         return when {
             expected == null -> "❔ "
-            answer is Int -> if (answer.toLong() == expected) "✅ " else "❌ "
-            answer is Long -> if (answer == expected) "✅ " else "❌ "
-            else -> "❔ "
+            answer.toString() == expected -> "✅ "
+            else -> "❌ "
         }
     }
 

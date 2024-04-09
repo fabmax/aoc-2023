@@ -1,7 +1,7 @@
 plugins {
-    kotlin("jvm") version "1.9.21"
+    kotlin("jvm") version "1.9.23"
     id("org.jetbrains.kotlinx.benchmark") version "0.4.10"
-    id("org.jetbrains.kotlin.plugin.allopen") version "1.9.21"
+    id("org.jetbrains.kotlin.plugin.allopen") version "1.9.23"
 }
 
 repositories {
@@ -12,11 +12,15 @@ repositories {
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:0.4.10")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.6.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.1")
+
     implementation("io.ksmt:ksmt-core:0.5.6")
     implementation("io.ksmt:ksmt-z3:0.5.6")
 
-    implementation("de.fabmax.kool:kool-core:0.14.0-SNAPSHOT")
-    implementation("de.fabmax.kool:kool-physics:0.14.0-SNAPSHOT")
+    implementation("de.fabmax.kool:kool-core:0.14.0")
+    implementation("de.fabmax.kool:kool-physics:0.14.0")
 
     listOf("natives-windows", "natives-linux", "natives-macos", "natives-macos-arm64").forEach { platform ->
         val lwjglVersion = "3.3.3"
@@ -48,7 +52,7 @@ benchmark {
             iterations = 5
             iterationTime = 1000
             iterationTimeUnit = "millis"
-            include("Day25")
+            include("y2023.*Day25")
         }
     }
     targets {
