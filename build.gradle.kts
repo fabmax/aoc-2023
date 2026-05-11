@@ -1,7 +1,7 @@
 plugins {
-    kotlin("jvm") version "1.9.23"
+    kotlin("jvm") version "2.3.21"
     id("org.jetbrains.kotlinx.benchmark") version "0.4.10"
-    id("org.jetbrains.kotlin.plugin.allopen") version "1.9.23"
+    id("org.jetbrains.kotlin.plugin.allopen") version "2.3.21"
 }
 
 repositories {
