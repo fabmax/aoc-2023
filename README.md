@@ -1,7 +1,7 @@
 # Moved to [aoc-kt](https://github.com/fabmax/aoc-kt)
 Since I continue to use this repo to solve more puzzles in year 2024, I archived this project and moved its contents.
 
-# Advent of code 2023 (in kotlin)
+# Advent of Code 2023 (in Kotlin)
 
 Solutions to all puzzles of [Advent of code 2023](https://adventofcode.com/2023/)
 
