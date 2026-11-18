@@ -1,5 +1,5 @@
 # Moved to [aoc-kt](https://github.com/fabmax/aoc-kt)
-Since I continue to use this repo to solve more puzlles in year 2024, I archived this project and moved its contents.
+Since I continue to use this repo to solve more puzzles in year 2024, I archived this project and moved its contents.
 
 # Advent of code 2023 (in kotlin)
 
